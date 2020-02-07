@@ -14,13 +14,6 @@ data class StationList(
         val routeType: String
 )
 
-data class BusRouteMap(
-        val stationName: String,
-        val stationId: String,
-        val firstTime: String,
-        val lastTime: String
-)
-
 data class BusList(
         val arsId: String,
         val stationName: String,

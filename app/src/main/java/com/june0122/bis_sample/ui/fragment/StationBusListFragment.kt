@@ -11,7 +11,6 @@ import com.june0122.bis_sample.model.BusList
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.ui.adapter.StationBusListAdapter
 import com.june0122.bis_sample.utils.createParser
-import com.june0122.bis_sample.utils.setStrictMode
 import kotlinx.android.synthetic.main.fragment_station_bus_list.*
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.*
 import org.xmlpull.v1.XmlPullParser
@@ -19,12 +18,17 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.net.URL
 
-class StationBusListFragment(private val arsId : String) : Fragment() {
+class StationBusListFragment : Fragment() {
+    private var inputData: String = ""
     private val busList = arrayListOf<BusList>()
     private val stationBusListAdapter = StationBusListAdapter()
 
+    fun inputArsId(arsId: String) {
+        inputData = arsId
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_station_bus_list, container, false)
     }
@@ -37,14 +41,10 @@ class StationBusListFragment(private val arsId : String) : Fragment() {
         stationBusListLayoutManager.orientation = LinearLayoutManager.VERTICAL
         busListRecyclerView.adapter = stationBusListAdapter
 
-        setStrictMode()
-
-        Thread(Runnable {
-            activity?.runOnUiThread {
-                busList.clear()
-                searchBusListAtStation(arsId)
-            }
-        }).start()
+        activity?.runOnUiThread {
+            busList.clear()
+            searchBusListAtStation(inputData)
+        }
 
         backButtonImageView.setOnClickListener {
             activity?.supportFragmentManager

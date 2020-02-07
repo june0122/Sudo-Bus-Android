@@ -2,11 +2,8 @@ package com.june0122.bis_sample.ui.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.june0122.bis_sample.model.BusData
 import com.june0122.bis_sample.model.StationPreviewData
-import com.june0122.bis_sample.ui.viewholder.PreviewBusViewHolder
 import com.june0122.bis_sample.ui.viewholder.PreviewStationViewHolder
-import kotlinx.android.synthetic.main.item_preview_bus_list.view.*
 import kotlinx.android.synthetic.main.item_preview_station_list.view.*
 
 class PreviewStationAdapter : RecyclerView.Adapter<PreviewStationViewHolder>() {
@@ -24,8 +21,5 @@ class PreviewStationAdapter : RecyclerView.Adapter<PreviewStationViewHolder>() {
             stationNamePreviewTextView.text = model.stationName
             stationArsIdPreviewTextView.text = model.stationArsId
         }
-
     }
-
-
 }

@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RouteData
@@ -17,7 +15,6 @@ import com.june0122.bis_sample.ui.adapter.BusRouteAdapter
 import com.june0122.bis_sample.utils.checkBusType
 import com.june0122.bis_sample.utils.createParser
 import com.june0122.bis_sample.utils.formatTime
-import com.june0122.bis_sample.utils.setStrictMode
 import kotlinx.android.synthetic.main.fragment_bus_route.*
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.*
 import org.xmlpull.v1.XmlPullParser
@@ -25,12 +22,21 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.net.URL
 
-class BusRouteFragment(private var inputData: String) : Fragment() {
+class BusRouteFragment : Fragment() {
+    private var inputData: String = ""
     private val routeData = arrayListOf<RouteData>()
     private val stationList = arrayListOf<StationList>()
     private val busRouteAdapter = BusRouteAdapter()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    fun inputBusNumber(busNumber: String) {
+        inputData = busNumber
+    }
+
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_bus_route, container, false)
     }
 
@@ -42,22 +48,16 @@ class BusRouteFragment(private var inputData: String) : Fragment() {
         busRouteLayoutManager.orientation = LinearLayoutManager.VERTICAL
         busRouteRecyclerView.adapter = busRouteAdapter
 
-        setStrictMode()
-
-        Thread(Runnable {
-            activity?.runOnUiThread {
-
-                stationList.clear()
-                when (inputData) {
-                    "" -> stationList.clear()
-                    else -> {
-                        searchBusRouteInfo(inputData)
-                        searchBusRoute(searchBusRouteInfo(inputData))
-                    }
+        activity?.runOnUiThread {
+            stationList.clear()
+            when (inputData) {
+                "" -> stationList.clear()
+                else -> {
+                    searchBusRouteInfo(inputData)
+                    searchBusRoute(searchBusRouteInfo(inputData))
                 }
             }
-        }).start()
-
+        }
 
         backButtonImageView.setOnClickListener {
             activity?.supportFragmentManager
@@ -77,7 +77,8 @@ class BusRouteFragment(private var inputData: String) : Fragment() {
 
     @Throws(XmlPullParserException::class, IOException::class)
     fun searchBusRoute(routeId: String) {
-        val url = URL("http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute?ServiceKey=$SERVICE_KEY&busRouteId=$routeId")
+        val url =
+                URL("http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute?ServiceKey=$SERVICE_KEY&busRouteId=$routeId")
 
         val parser = createParser(url).parser
         var parserEvent = createParser(url).parserEvent
@@ -256,7 +257,15 @@ class BusRouteFragment(private var inputData: String) : Fragment() {
                         trnstnidTag -> {
                             trnstnid = parser.text
 
-                            val data = StationList(busRouteId, busRouteNm, stationNm, arsId, beginTm, lastTm, routeType)
+                            val data = StationList(
+                                    busRouteId,
+                                    busRouteNm,
+                                    stationNm,
+                                    arsId,
+                                    beginTm,
+                                    lastTm,
+                                    routeType
+                            )
                             stationList.add(data)
                         }
                     }
@@ -292,7 +301,10 @@ class BusRouteFragment(private var inputData: String) : Fragment() {
 
         stationList.forEach {
             Log.d("XXX", "${it.stationName} ${it.stationId} | ${it.firstTime} ~ ${it.lastTime}")
-            Log.d("XXX", "$direction $gpsX $gpsY $lastTm $posX $posY $routeType $sectSpd $section $seq $station $stationNo $transYn $fullSectDist $trnstnid")
+            Log.d(
+                    "XXX",
+                    "$direction $gpsX $gpsY $lastTm $posX $posY $routeType $sectSpd $section $seq $station $stationNo $transYn $fullSectDist $trnstnid"
+            )
         }
 
     }
@@ -300,7 +312,8 @@ class BusRouteFragment(private var inputData: String) : Fragment() {
 
     @Throws(XmlPullParserException::class, IOException::class)
     fun searchBusRouteInfo(busNumber: String): String {
-        val url = URL("http://ws.bus.go.kr/api/rest/busRouteInfo/getBusRouteList?ServiceKey=$SERVICE_KEY&strSrch=$busNumber")
+        val url =
+                URL("http://ws.bus.go.kr/api/rest/busRouteInfo/getBusRouteList?ServiceKey=$SERVICE_KEY&strSrch=$busNumber")
 
         val parser = createParser(url).parser
         var parserEvent = createParser(url).parserEvent
@@ -398,7 +411,18 @@ class BusRouteFragment(private var inputData: String) : Fragment() {
                         termTag -> {
                             term = parser.text
 
-                            val data = RouteData(busRouteNm, busRouteId, routeType, term, stStationNm, edStationNm, firstBusTm, lastBusTm, lastBusYn, corpNm)
+                            val data = RouteData(
+                                    busRouteNm,
+                                    busRouteId,
+                                    routeType,
+                                    term,
+                                    stStationNm,
+                                    edStationNm,
+                                    firstBusTm,
+                                    lastBusTm,
+                                    lastBusYn,
+                                    corpNm
+                            )
                             routeData.add(data)
                         }
                     }

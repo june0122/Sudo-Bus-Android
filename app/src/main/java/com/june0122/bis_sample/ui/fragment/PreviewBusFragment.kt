@@ -13,16 +13,20 @@ import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.ui.adapter.PreviewBusAdapter
 import com.june0122.bis_sample.utils.*
 import kotlinx.android.synthetic.main.fragment_preview_bus.*
-import kotlinx.android.synthetic.main.fragment_search.*
-import kotlinx.android.synthetic.main.layout_appbar_bus_route.*
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.net.URL
 
-class PreviewBusFragment(private var inputData: String) : Fragment() {
+class PreviewBusFragment : Fragment() {
+    private var inputData: String = ""
     private val busData = arrayListOf<BusData>()
     private val previewBusAdapter = PreviewBusAdapter()
+    private val busRouteFragment = BusRouteFragment()
+
+    fun inputBusNumber(busNumber: String) {
+        inputData = busNumber
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_preview_bus, container, false)
@@ -31,31 +35,28 @@ class PreviewBusFragment(private var inputData: String) : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val previewBusListLayoutManager = LinearLayoutManager(context)
         previewBusRecyclerView.layoutManager = previewBusListLayoutManager
         previewBusListLayoutManager.orientation = LinearLayoutManager.VERTICAL
         previewBusRecyclerView.adapter = previewBusAdapter
 
-        setStrictMode()
-
-        Thread(Runnable {
-            activity?.runOnUiThread {
-                busData.clear()
-                when (inputData) {
-                    "" -> busData.clear()
-                    else -> searchBusRouteId(inputData)
-                }
+        activity?.runOnUiThread {
+            busData.clear()
+            when (inputData) {
+                "" -> busData.clear()
+                else -> searchBusRouteId(inputData)
             }
-        }).start()
+        }
 
         previewBusRecyclerView.addOnItemTouchListener(
                 RecyclerItemClickListener(view.context, previewBusRecyclerView, object : RecyclerItemClickListener.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
 
+                        busRouteFragment.inputBusNumber(previewBusAdapter.items[position].busNumber)
+
                         activity?.supportFragmentManager
                                 ?.beginTransaction()
-                                ?.replace(R.id.fragmentContainer, BusRouteFragment(previewBusAdapter.items[position].busNumber))
+                                ?.replace(R.id.fragmentContainer, busRouteFragment)
                                 ?.addToBackStack(null)?.commit()
 
 //                        childFragmentManager

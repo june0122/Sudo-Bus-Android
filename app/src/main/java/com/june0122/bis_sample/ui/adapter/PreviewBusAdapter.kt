@@ -21,8 +21,5 @@ class PreviewBusAdapter : RecyclerView.Adapter<PreviewBusViewHolder>() {
             busNumberPreviewTextView.text = model.busNumber
             busTypeTextView.text = model.busType
         }
-
     }
-
-
 }

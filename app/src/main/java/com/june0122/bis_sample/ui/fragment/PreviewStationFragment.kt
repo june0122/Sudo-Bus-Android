@@ -1,8 +1,6 @@
 package com.june0122.bis_sample.ui.fragment
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,27 +8,32 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.june0122.bis_sample.R
-import com.june0122.bis_sample.model.Data
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.StationPreviewData
 import com.june0122.bis_sample.ui.adapter.PreviewStationAdapter
 import com.june0122.bis_sample.utils.RecyclerItemClickListener
 import com.june0122.bis_sample.utils.createParser
-import com.june0122.bis_sample.utils.setStrictMode
-import kotlinx.android.synthetic.main.fragment_preview_bus.*
 import kotlinx.android.synthetic.main.fragment_preview_station.*
-import kotlinx.android.synthetic.main.fragment_search.*
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.net.URL
 
-class PreviewStationFragment(private var inputData: String) : Fragment() {
+class PreviewStationFragment : Fragment() {
+    private var inputData: String = ""
     private val stationPreviewData = arrayListOf<StationPreviewData>()
     private val previewStationAdapter = PreviewStationAdapter()
+    private val stationBusListFragment = StationBusListFragment()
 
+    fun inputStationArsId(stationArsId: String) {
+        inputData = stationArsId
+    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_preview_station, container, false)
     }
 
@@ -42,35 +45,36 @@ class PreviewStationFragment(private var inputData: String) : Fragment() {
         previewStationListLayoutManager.orientation = LinearLayoutManager.VERTICAL
         previewStationRecyclerView.adapter = previewStationAdapter
 
-        setStrictMode()
-
-        Thread(Runnable {
-            activity?.runOnUiThread {
-                stationPreviewData.clear()
-                when (inputData) {
-                    "" -> stationPreviewData.clear()
-                    else -> searchStationId(inputData)
-                }
+        activity?.runOnUiThread {
+            stationPreviewData.clear()
+            when (inputData) {
+                "" -> stationPreviewData.clear()
+                else -> searchStationId(inputData)
             }
-        }).start()
+        }
 
         previewStationRecyclerView.addOnItemTouchListener(
-                RecyclerItemClickListener(view.context, previewStationRecyclerView, object : RecyclerItemClickListener.OnItemClickListener {
-                    override fun onItemClick(view: View, position: Int) {
+                RecyclerItemClickListener(
+                        view.context,
+                        previewStationRecyclerView,
+                        object : RecyclerItemClickListener.OnItemClickListener {
+                            override fun onItemClick(view: View, position: Int) {
 
-                        activity?.supportFragmentManager
-                                ?.beginTransaction()
-                                ?.replace(R.id.fragmentContainer, StationBusListFragment(previewStationAdapter.items[position].stationArsId))
-                                ?.addToBackStack(null)?.commit()
-                    }
-                })
+                                stationBusListFragment.inputArsId(previewStationAdapter.items[position].stationArsId)
+
+                                activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.replace(R.id.fragmentContainer, stationBusListFragment)
+                                        ?.addToBackStack(null)?.commit()
+                            }
+                        })
         )
-
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
     private fun searchStationId(busStationName: String) {
-        val url = URL("http://ws.bus.go.kr/api/rest/stationinfo/getStationByName?ServiceKey=${SERVICE_KEY}&stSrch=$busStationName"
+        val url = URL(
+                "http://ws.bus.go.kr/api/rest/stationinfo/getStationByName?ServiceKey=${SERVICE_KEY}&stSrch=$busStationName"
         )
 
         val parser = createParser(url).parser
@@ -177,7 +181,10 @@ class PreviewStationFragment(private var inputData: String) : Fragment() {
         previewStationAdapter.notifyDataSetChanged()
 
         stationPreviewData.forEach {
-            Log.d("XXX", "[정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}")
+            Log.d(
+                    "XXX",
+                    "[정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}"
+            )
         }
     }
 }

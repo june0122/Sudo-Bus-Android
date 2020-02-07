@@ -1,10 +1,28 @@
 package com.june0122.bis_sample.utils
 
+import android.content.Context
+import android.content.res.Resources
 import android.os.StrictMode
+import android.util.DisplayMetrics
 import com.june0122.bis_sample.model.ParserElement
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStreamReader
 import java.net.URL
+import kotlin.math.roundToInt
+
+fun Int.px(): Int = (this / Resources.getSystem().displayMetrics.density).toInt()
+
+fun Int.dp(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+fun convertPixelsToDp(context: Context, px: Int): Int {
+    return (px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).roundToInt()
+}
+
+fun convertDpToPixel(context: Context, dp: Int): Float {
+    val resources = context.resources
+    val metrics = resources.displayMetrics
+    return dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+}
 
 fun createParser(url: URL): ParserElement {
     val inputStream = url.openStream()

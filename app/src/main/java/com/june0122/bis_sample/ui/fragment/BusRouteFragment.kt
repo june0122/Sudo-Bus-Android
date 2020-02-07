@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RouteData
@@ -14,6 +15,7 @@ import com.june0122.bis_sample.model.StationList
 import com.june0122.bis_sample.ui.adapter.BusRouteAdapter
 import com.june0122.bis_sample.utils.checkBusType
 import com.june0122.bis_sample.utils.createParser
+import com.june0122.bis_sample.utils.decoration.BusRouteItemDecoration
 import com.june0122.bis_sample.utils.formatTime
 import kotlinx.android.synthetic.main.fragment_bus_route.*
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.*
@@ -47,6 +49,15 @@ class BusRouteFragment : Fragment() {
         busRouteRecyclerView.layoutManager = busRouteLayoutManager
         busRouteLayoutManager.orientation = LinearLayoutManager.VERTICAL
         busRouteRecyclerView.adapter = busRouteAdapter
+
+        busRouteLayoutManager.findLastCompletelyVisibleItemPosition()
+
+        busRouteRecyclerView.addItemDecoration(
+                BusRouteItemDecoration(
+                        context,
+                        busRouteAdapter.itemCount
+                )
+        )
 
         activity?.runOnUiThread {
             stationList.clear()

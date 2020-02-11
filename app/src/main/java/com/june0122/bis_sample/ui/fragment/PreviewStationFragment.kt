@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.june0122.bis_sample.R
@@ -60,7 +61,18 @@ class PreviewStationFragment : Fragment() {
                         object : RecyclerItemClickListener.OnItemClickListener {
                             override fun onItemClick(view: View, position: Int) {
 
+                                if (stationPreviewData[position].stationArsId == "0") {
+                                    Toast.makeText(context, "해당 정류소의 정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                                    return
+                                }
+
                                 stationBusListFragment.inputArsId(previewStationAdapter.items[position].stationArsId)
+
+//                                if (stationBusListFragment.busList[position].arsId == "") {
+//                                    Log.d("CHECK", "NULL")
+//                                    Toast.makeText(context, "해당 정류소의 정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+//                                    return
+//                                }
 
                                 activity?.supportFragmentManager
                                         ?.beginTransaction()

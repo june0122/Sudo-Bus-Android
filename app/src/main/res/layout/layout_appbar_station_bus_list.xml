@@ -9,15 +9,19 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:theme="@style/AppTheme.AppBarOverlay"
+    app:expanded="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:id="@+id/stationBusListCollapsingToolbarLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:minHeight="50dp"
         app:contentScrim="@color/dove_gray"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:scrimAnimationDuration="200"
+        app:scrimVisibleHeightTrigger="450px"
         app:statusBarScrim="@color/transparent"
         app:toolbarId="@id/stationBusListToolbar">
 
@@ -141,6 +145,16 @@
                     app:srcCompat="@drawable/ic_arrow_left" />
 
                 <ImageView
+                    android:id="@+id/toolbarBusRouteMapButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/toolbarFavoriteButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_map" />
+
+                <ImageView
                     android:id="@+id/toolbarHomeButton"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
@@ -151,8 +165,29 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_home" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/toolbarStationNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="연남동"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/backButtonImageView"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <Button
+                    android:id="@+id/toolbarFavoriteButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/button_favorite"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/toolbarHomeButton"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.appcompat.widget.Toolbar>
 

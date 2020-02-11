@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
+import com.google.android.material.appbar.AppBarLayout
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RouteData
@@ -23,6 +23,7 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.net.URL
+import kotlin.math.abs
 
 class BusRouteFragment : Fragment() {
     private var inputData: String = ""
@@ -84,6 +85,32 @@ class BusRouteFragment : Fragment() {
                     ?.addToBackStack(null)?.commit()
         }
 
+        val busRouteAppBarLayout: AppBarLayout? = view.findViewById(R.id.busRouteAppbar)
+
+        busRouteAppBarLayout?.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val ratio: Float
+            val totalScrollRange = busRouteAppBarLayout.totalScrollRange
+            val visibleTriggerHeight = 250
+
+            Log.d("APPBAR", "verticalOffset : $verticalOffset")
+            Log.d("APPBAR", "totalScrollRange : ${busRouteAppBarLayout.totalScrollRange}")
+            Log.d("APPBAR", "height : ${busRouteCollapsingToolbarLayout.height}")
+
+            if (verticalOffset in -totalScrollRange..-visibleTriggerHeight) {
+                ratio = (verticalOffset.toFloat() + visibleTriggerHeight) / (appBarLayout.totalScrollRange.toFloat() - visibleTriggerHeight)
+
+                toolbarBusNumberTextView.alpha = abs(ratio)
+                toolbarBusInfoButton.alpha = abs(ratio)
+                toolbarBusRouteMapButton.alpha = abs(ratio)
+
+            } else {
+                ratio = 0f
+
+                toolbarBusNumberTextView.alpha = abs(ratio)
+                toolbarBusInfoButton.alpha = abs(ratio)
+                toolbarBusRouteMapButton.alpha = abs(ratio)
+            }
+        })
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
@@ -457,6 +484,7 @@ class BusRouteFragment : Fragment() {
 
         busTypeTextView.text = checkBusType(routeType)
         busNumberTextView.text = busRouteNm
+        toolbarBusNumberTextView.text = busRouteNm
         firstStationNameTextView.text = stStationNm
         endStationNameTextView.text = edStationNm
 

@@ -1,11 +1,14 @@
 package com.june0122.bis_sample.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.BusList
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
@@ -13,10 +16,14 @@ import com.june0122.bis_sample.ui.adapter.StationBusListAdapter
 import com.june0122.bis_sample.utils.createParser
 import kotlinx.android.synthetic.main.fragment_station_bus_list.*
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.*
+import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.backButtonImageView
+import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.toolbarBusRouteMapButton
+import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.toolbarHomeButton
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.net.URL
+import kotlin.math.abs
 
 class StationBusListFragment : Fragment() {
     private var inputData: String = ""
@@ -59,6 +66,34 @@ class StationBusListFragment : Fragment() {
                     ?.replace(R.id.fragmentContainer, SearchInfoFragment())
                     ?.addToBackStack(null)?.commit()
         }
+
+        val stationBusListAppBarLayout: AppBarLayout? = view.findViewById(R.id.stationBusListAppbar)
+
+        stationBusListAppBarLayout?.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val ratio: Float
+            val totalScrollRange = stationBusListAppBarLayout.totalScrollRange
+            val visibleTriggerHeight = 250
+
+            Log.d("APPBAR", "verticalOffset : $verticalOffset")
+            Log.d("APPBAR", "totalScrollRange : ${stationBusListAppBarLayout.totalScrollRange}")
+            Log.d("APPBAR", "height : ${stationBusListCollapsingToolbarLayout.height}")
+
+            if (verticalOffset in -totalScrollRange..-visibleTriggerHeight) {
+                ratio = (verticalOffset.toFloat() + visibleTriggerHeight) / (appBarLayout.totalScrollRange.toFloat() - visibleTriggerHeight)
+
+                toolbarStationNameTextView.alpha = abs(ratio)
+                toolbarBusRouteMapButton.alpha = abs(ratio)
+                toolbarFavoriteButton.alpha = abs(ratio)
+
+            } else {
+                ratio = 0f
+
+                toolbarStationNameTextView.alpha = abs(ratio)
+                toolbarBusRouteMapButton.alpha = abs(ratio)
+                toolbarFavoriteButton.alpha = abs(ratio)
+            }
+        })
+
 
     }
 
@@ -144,12 +179,18 @@ class StationBusListFragment : Fragment() {
             parserEvent = parser.next()
         }
 
+        if (busList.isEmpty()) {
+            Log.d("EMPTY", "Empty Info")
+            Toast.makeText(context, "해당 정류소의 정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+        }
+
         stationBusListAdapter.items.clear()
         stationBusListAdapter.items.addAll(busList)
         stationBusListAdapter.notifyDataSetChanged()
 
         stationArsIdTextView?.text = busList[0].arsId
         stationNameTextView?.text = busList[0].stationName
+        toolbarStationNameTextView?.text = busList[0].stationName
         stationDirectionTextView?.text = resources.getString(R.string.direction_station, busList[0].nextStation)
     }
 }

@@ -1,7 +1,6 @@
 package com.june0122.bis_sample.ui.fragment
 
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -10,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.ui.adapter.SearchResultViewPagerAdapter
+import com.june0122.bis_sample.utils.dp
 import com.june0122.bis_sample.utils.setStrictMode
 import kotlinx.android.synthetic.main.fragment_search.*
 
@@ -51,8 +52,23 @@ class SearchInfoFragment : Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 Log.d("INPUT", inputData)
                 when (tab?.position) {
-                    0 -> searchEditText.setAttributes(getString(R.string.search_tab_hint_1), InputType.TYPE_CLASS_NUMBER)
-                    1 -> searchEditText.setAttributes(getString(R.string.search_tab_hint_2), InputType.TYPE_CLASS_TEXT)
+                    0 -> {
+                        numberTypeKeyboardButton.isSelected = true
+                        textTypeKeyboardButton.isSelected = false
+                        searchEditText.setAttributes(getString(R.string.search_tab_hint_1), InputType.TYPE_CLASS_NUMBER)
+
+
+                        numberTypeKeyboardButton.setTextColor(resources.getColor(R.color.white))
+                        textTypeKeyboardButton.setTextColor(resources.getColor(R.color.gray_alpha_20))
+                    }
+                    1 -> {
+                        textTypeKeyboardButton.isSelected = true
+                        numberTypeKeyboardButton.isSelected = false
+                        searchEditText.setAttributes(getString(R.string.search_tab_hint_2), InputType.TYPE_CLASS_TEXT)
+
+                        textTypeKeyboardButton.setTextColor(resources.getColor(R.color.white))
+                        numberTypeKeyboardButton.setTextColor(resources.getColor(R.color.gray_alpha_20))
+                    }
                 }
             }
 
@@ -60,8 +76,41 @@ class SearchInfoFragment : Fragment() {
             }
         })
 
-//        val handler = Handler()
-//        handler.postDelayed({}, 1700)
+        val searchFragmentLayout = view.findViewById<ConstraintLayout>(R.id.searchFragmentLayout)
+        val keyboardTabLayout = view.findViewById<ConstraintLayout>(R.id.keyboardTabLayout)
+
+        numberTypeKeyboardButton.isSelected = true
+        textTypeKeyboardButton.setTextColor(ContextCompat.getColor(view.context, R.color.gray_alpha_20))
+
+        keyboardTabLayout?.viewTreeObserver?.addOnGlobalLayoutListener {
+            val rootViewHeight = searchFragmentLayout.rootView.height
+            val searchFragmentLayoutHeight = searchFragmentLayout.height
+            val gapOfHeight = rootViewHeight - searchFragmentLayoutHeight
+
+            if (gapOfHeight > 200.dp()) {
+                keyboardTabLayout.visibility = View.VISIBLE
+            } else {
+                keyboardTabLayout.visibility = View.GONE
+            }
+        }
+
+        numberTypeKeyboardButton.setOnClickListener {
+            numberTypeKeyboardButton.isSelected = true
+            textTypeKeyboardButton.isSelected = false
+            numberTypeKeyboardButton.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+            textTypeKeyboardButton.setTextColor(ContextCompat.getColor(view.context, R.color.gray_alpha_20))
+
+            searchEditText.inputType = InputType.TYPE_CLASS_NUMBER
+        }
+
+        textTypeKeyboardButton.setOnClickListener {
+            textTypeKeyboardButton.isSelected = true
+            numberTypeKeyboardButton.isSelected = false
+            textTypeKeyboardButton.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+            numberTypeKeyboardButton.setTextColor(ContextCompat.getColor(view.context, R.color.gray_alpha_20))
+            searchEditText.inputType = InputType.TYPE_CLASS_TEXT
+        }
+
 
         setStrictMode()
 
@@ -100,18 +149,5 @@ class SearchInfoFragment : Fragment() {
             })
 
         }
-
-        searchResultViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
-            }
-
-            override fun onPageSelected(position: Int) {
-
-            }
-        })
     }
 }

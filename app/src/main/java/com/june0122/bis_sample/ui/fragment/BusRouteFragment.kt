@@ -85,6 +85,8 @@ class BusRouteFragment : Fragment() {
                     ?.addToBackStack(null)?.commit()
         }
 
+        toolbarBusNumberTextView.isSelected = true
+
         val busRouteAppBarLayout: AppBarLayout? = view.findViewById(R.id.busRouteAppbar)
 
         busRouteAppBarLayout?.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->

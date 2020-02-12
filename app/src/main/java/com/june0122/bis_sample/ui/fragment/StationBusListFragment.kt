@@ -1,6 +1,7 @@
 package com.june0122.bis_sample.ui.fragment
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -66,6 +67,9 @@ class StationBusListFragment : Fragment() {
                     ?.replace(R.id.fragmentContainer, SearchInfoFragment())
                     ?.addToBackStack(null)?.commit()
         }
+
+        toolbarStationNameTextView.isSelected = true
+
 
         val stationBusListAppBarLayout: AppBarLayout? = view.findViewById(R.id.stationBusListAppbar)
 

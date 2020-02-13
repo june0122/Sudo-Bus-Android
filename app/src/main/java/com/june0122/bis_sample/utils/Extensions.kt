@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.StrictMode
 import android.util.DisplayMetrics
+import android.view.View
+import android.widget.Button
+import androidx.core.content.ContextCompat
 import com.june0122.bis_sample.model.ParserElement
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStreamReader
@@ -22,6 +25,10 @@ fun convertDpToPixel(context: Context, dp: Int): Float {
     val resources = context.resources
     val metrics = resources.displayMetrics
     return dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+}
+
+fun Button.textColor(view: View, color: Int) {
+    this.setTextColor(ContextCompat.getColor(view.context, color))
 }
 
 fun createParser(url: URL): ParserElement {

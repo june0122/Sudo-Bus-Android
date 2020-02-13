@@ -6,10 +6,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.BusList
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
@@ -68,8 +73,29 @@ class StationBusListFragment : Fragment() {
                     ?.addToBackStack(null)?.commit()
         }
 
-        toolbarStationNameTextView.isSelected = true
+        refreshFAB.setOnClickListener {
+            refreshFAB.animate()
+                    .rotationBy(180f)
+                    .setDuration(300)
+                    .scaleX(1.2f)
+                    .scaleY(1.2f)
+                    .setInterpolator(AccelerateInterpolator())
+                    .withEndAction {
+                        refreshFAB.animate()
+                                .rotationBy(180f)
+                                .setDuration(300)
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setInterpolator(DecelerateInterpolator())
+                                .start()
+                    }
+                    .start()
 
+            busList.clear()
+            searchBusListAtStation(inputData)
+        }
+
+        toolbarStationNameTextView.isSelected = true
 
         val stationBusListAppBarLayout: AppBarLayout? = view.findViewById(R.id.stationBusListAppbar)
 
@@ -188,9 +214,11 @@ class StationBusListFragment : Fragment() {
             Toast.makeText(context, "해당 정류소의 정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
         }
 
-        stationBusListAdapter.items.clear()
-        stationBusListAdapter.items.addAll(busList)
-        stationBusListAdapter.notifyDataSetChanged()
+        stationBusListAdapter.apply {
+            items.clear()
+            items.addAll(busList)
+            notifyDataSetChanged()
+        }
 
         stationArsIdTextView?.text = busList[0].arsId
         stationNameTextView?.text = busList[0].stationName

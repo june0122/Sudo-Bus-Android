@@ -33,4 +33,19 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/refreshFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/mine_shaft"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="2dp"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_refresh"
+        tools:layout_editor_absoluteY="397dp" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -199,4 +199,43 @@ class PreviewStationFragment : Fragment() {
             )
         }
     }
+
+//
+//    @Throws(XmlPullParserException::class, IOException::class)
+//    private fun searchNextStation(stationId: String) {
+//        val url = URL("http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?ServiceKey=${SERVICE_KEY}&arsId=$stationId")
+//
+//        val parser = createParser(url).parser
+//        var parserEvent = createParser(url).parserEvent
+//
+//        var nxtStnTag = false
+//        var nxtStn = ""
+//
+//        while (parserEvent != XmlPullParser.END_DOCUMENT) {
+//            when (parserEvent) {
+//                XmlPullParser.START_TAG -> {
+//                    when (parser.name) {
+//                        "nxtStn" -> {
+//                            nxtStnTag = true
+//                        }
+//                    }
+//                }
+//
+//                XmlPullParser.TEXT -> {
+//                    when {
+//                        nxtStnTag -> {
+//                            nxtStn = parser.text
+//
+//                        }
+//                    }
+//                    nxtStnTag = false
+//                }
+//            }
+//            parserEvent = parser.next()
+//        }
+//
+//        Log.d("TEST", nxtStn)
+//
+//    }
+
 }

@@ -67,6 +67,10 @@ class PreviewStationFragment : Fragment() {
                                 }
 
                                 stationBusListFragment.inputArsId(previewStationAdapter.items[position].stationArsId)
+                                stationBusListFragment.inputLatLng(
+                                        previewStationAdapter.items[position].wgs84Y.toDouble(),
+                                        previewStationAdapter.items[position].wgs84X.toDouble()
+                                )
 
 //                                if (stationBusListFragment.busList[position].arsId == "") {
 //                                    Log.d("CHECK", "NULL")

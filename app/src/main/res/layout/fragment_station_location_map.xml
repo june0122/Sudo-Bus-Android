@@ -21,7 +21,7 @@
         android:id="@+id/mapLocationLayout"
         android:layout_width="0dp"
         android:layout_height="25dp"
-        android:background="@color/black_alpha_20"
+        android:background="@color/black_alpha_30"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/locationActionBarLayout">
@@ -88,6 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="연남동"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/bottomBusArsIdTextView"
             app:layout_constraintStart_toStartOf="parent"
@@ -123,6 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="동교동삼거리 방면"
+            android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@+id/bottomBusArsIdTextView"
             app:layout_constraintStart_toEndOf="@+id/divider"
             app:layout_constraintTop_toTopOf="@+id/bottomBusArsIdTextView" />

@@ -21,8 +21,10 @@ import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.ui.adapter.StationBusListAdapter
 import com.june0122.bis_sample.utils.createParser
 import kotlinx.android.synthetic.main.fragment_station_bus_list.*
+import kotlinx.android.synthetic.main.fragment_station_location_map.*
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.*
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.backButtonImageView
+import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.stationNameTextView
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.toolbarBusRouteMapButton
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.toolbarHomeButton
 import org.xmlpull.v1.XmlPullParser
@@ -36,8 +38,17 @@ class StationBusListFragment : Fragment() {
     private val busList = arrayListOf<BusList>()
     private val stationBusListAdapter = StationBusListAdapter()
 
+    private val stationLocationMapFragment = StationLocationMapFragment()
+    private var lat : Double = 0.0
+    private var lng : Double = 0.0
+
     fun inputArsId(arsId: String) {
         inputData = arsId
+    }
+
+    fun inputLatLng(latitude: Double, longitude: Double) {
+        lat = latitude
+        lng = longitude
     }
 
     override fun onCreateView(
@@ -72,6 +83,17 @@ class StationBusListFragment : Fragment() {
                     ?.replace(R.id.fragmentContainer, SearchInfoFragment())
                     ?.addToBackStack(null)?.commit()
         }
+
+        stationLocationMapFragment.setLatLng(lat, lng)
+        stationLocationMapFragment.inputUiText(busList[0].stationName, busList[0].arsId, busList[0].nextStation)
+
+        appbarMapButton.setOnClickListener {
+            activity?.supportFragmentManager
+                ?.beginTransaction()
+                ?.replace(R.id.fragmentContainer, stationLocationMapFragment)
+                ?.addToBackStack(null)?.commit()
+        }
+
 
         refreshFAB.setOnClickListener {
             refreshFAB.animate()

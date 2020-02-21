@@ -50,7 +50,7 @@ class StationLocationMapFragment : Fragment(), OnMapReadyCallback {
             animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel))
 
             setOnCameraIdleListener {
-                val cameraPositionAddress = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
+                val cameraPositionAddress = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 3)
                 val formattedAddress = cameraPositionAddress[0].getAddressLine(0).toString()  // IndexOutOfBoundsException 예외 처리 필요
                 var exceptCountryNameAddress = ""
 
@@ -58,7 +58,7 @@ class StationLocationMapFragment : Fragment(), OnMapReadyCallback {
                     exceptCountryNameAddress = formattedAddress.replace("대한민국", "")
                 }
 
-                if (cameraPosition.zoom > 11f) {
+                if (cameraPosition.zoom > 13f) {
                     mapLocationLayout.visibility = View.VISIBLE
                     mapLocationTextView.text = exceptCountryNameAddress
                 } else {

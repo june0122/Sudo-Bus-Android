@@ -20,6 +20,7 @@ class PreviewStationAdapter : RecyclerView.Adapter<PreviewStationViewHolder>() {
         with(holder.itemView) {
             stationNamePreviewTextView.text = model.stationName
             stationArsIdPreviewTextView.text = model.stationArsId
+            directionPreviewTextView.text = model.nxtStn
         }
     }
 }

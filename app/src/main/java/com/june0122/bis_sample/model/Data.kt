@@ -55,7 +55,8 @@ data class StationPreviewData(
         val wgs84X: String,
         val wgs84Y: String,
         val grs80X: String,
-        val grs80Y: String
+        val grs80Y: String,
+        val nxtStn: String
 )
 
 class Data {

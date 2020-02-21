@@ -46,6 +46,8 @@ class PreviewStationFragment : Fragment() {
         previewStationListLayoutManager.orientation = LinearLayoutManager.VERTICAL
         previewStationRecyclerView.adapter = previewStationAdapter
 
+//        Log.d("TEST-S2", "${searchDirection("14226")}")
+
         activity?.runOnUiThread {
             stationPreviewData.clear()
             when (inputData) {
@@ -175,7 +177,7 @@ class PreviewStationFragment : Fragment() {
                         tmYTag -> {
                             tmY = parser.text
 
-                            val data = StationPreviewData(stNm, arsId, stId, tmX, tmY, posX, posY)
+                            val data = StationPreviewData(stNm, arsId, stId, tmX, tmY, posX, posY, searchDirection(arsId))
                             stationPreviewData.add(data)
                         }
                     }
@@ -199,47 +201,47 @@ class PreviewStationFragment : Fragment() {
         stationPreviewData.forEach {
             Log.d(
                     "XXX",
-                    "[정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}"
+                    "[정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}, [정류소 방향] ${it.nxtStn} "
             )
         }
     }
 
-//
-//    @Throws(XmlPullParserException::class, IOException::class)
-//    private fun searchNextStation(stationId: String) {
-//        val url = URL("http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?ServiceKey=${SERVICE_KEY}&arsId=$stationId")
-//
-//        val parser = createParser(url).parser
-//        var parserEvent = createParser(url).parserEvent
-//
-//        var nxtStnTag = false
-//        var nxtStn = ""
-//
-//        while (parserEvent != XmlPullParser.END_DOCUMENT) {
-//            when (parserEvent) {
-//                XmlPullParser.START_TAG -> {
-//                    when (parser.name) {
-//                        "nxtStn" -> {
-//                            nxtStnTag = true
-//                        }
-//                    }
-//                }
-//
-//                XmlPullParser.TEXT -> {
-//                    when {
-//                        nxtStnTag -> {
-//                            nxtStn = parser.text
-//
-//                        }
-//                    }
-//                    nxtStnTag = false
-//                }
-//            }
-//            parserEvent = parser.next()
-//        }
-//
-//        Log.d("TEST", nxtStn)
-//
-//    }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    private fun searchDirection(stationId: String): String {
+        val url = URL("http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?ServiceKey=${SERVICE_KEY}&arsId=$stationId")
+
+        val parser = createParser(url).parser
+        var parserEvent = createParser(url).parserEvent
+
+        var nxtStnTag = false
+        var nxtStn = ""
+
+        while (parserEvent != XmlPullParser.END_DOCUMENT) {
+            when (parserEvent) {
+                XmlPullParser.START_TAG -> {
+                    when (parser.name) {
+                        "nxtStn" -> {
+                            nxtStnTag = true
+                        }
+                    }
+                }
+
+                XmlPullParser.TEXT -> {
+                    when {
+                        nxtStnTag -> {
+                            nxtStn = parser.text
+
+                        }
+                    }
+                    nxtStnTag = false
+                }
+            }
+        }
+
+        Log.d("TEST", nxtStn)
+
+        return nxtStn
+    }
 
 }

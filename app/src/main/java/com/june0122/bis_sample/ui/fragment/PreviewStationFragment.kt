@@ -22,7 +22,7 @@ import java.net.URL
 
 class PreviewStationFragment : Fragment() {
     private var inputData: String = ""
-    private val stationPreviewData = arrayListOf<StationPreviewData>()
+    private val stationPreviewDataList = arrayListOf<StationPreviewData>()
     private val previewStationAdapter = PreviewStationAdapter()
     private val stationBusListFragment = StationBusListFragment()
 
@@ -49,9 +49,9 @@ class PreviewStationFragment : Fragment() {
 //        Log.d("TEST-S2", "${searchDirection("14226")}")
 
         activity?.runOnUiThread {
-            stationPreviewData.clear()
+            stationPreviewDataList.clear()
             when (inputData) {
-                "" -> stationPreviewData.clear()
+                "" -> stationPreviewDataList.clear()
                 else -> searchStationId(inputData)
             }
         }
@@ -63,7 +63,7 @@ class PreviewStationFragment : Fragment() {
                         object : RecyclerItemClickListener.OnItemClickListener {
                             override fun onItemClick(view: View, position: Int) {
 
-                                if (stationPreviewData[position].stationArsId == "0") {
+                                if (stationPreviewDataList[position].stationArsId == "0") {
                                     Toast.makeText(context, "해당 정류소의 정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                                     return
                                 }
@@ -177,8 +177,8 @@ class PreviewStationFragment : Fragment() {
                         tmYTag -> {
                             tmY = parser.text
 
-                            val data = StationPreviewData(stNm, arsId, stId, tmX, tmY, posX, posY, searchDirection(arsId))
-                            stationPreviewData.add(data)
+                            val data = StationPreviewData(stNm, arsId, stId, tmX, tmY, posX, posY)
+                            stationPreviewDataList.add(data)
                         }
                     }
 
@@ -195,53 +195,15 @@ class PreviewStationFragment : Fragment() {
         }
 
         previewStationAdapter.items.clear()
-        previewStationAdapter.items.addAll(stationPreviewData)
+        previewStationAdapter.items.addAll(stationPreviewDataList)
         previewStationAdapter.notifyDataSetChanged()
 
-        stationPreviewData.forEach {
+        stationPreviewDataList.forEach {
             Log.d(
                     "XXX",
-                    "[정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}, [정류소 방향] ${it.nxtStn} "
+                    "[정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}"
             )
         }
-    }
-
-
-    @Throws(XmlPullParserException::class, IOException::class)
-    private fun searchDirection(stationId: String): String {
-        val url = URL("http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?ServiceKey=${SERVICE_KEY}&arsId=$stationId")
-
-        val parser = createParser(url).parser
-        var parserEvent = createParser(url).parserEvent
-
-        var nxtStnTag = false
-        var nxtStn = ""
-
-        while (parserEvent != XmlPullParser.END_DOCUMENT) {
-            when (parserEvent) {
-                XmlPullParser.START_TAG -> {
-                    when (parser.name) {
-                        "nxtStn" -> {
-                            nxtStnTag = true
-                        }
-                    }
-                }
-
-                XmlPullParser.TEXT -> {
-                    when {
-                        nxtStnTag -> {
-                            nxtStn = parser.text
-
-                        }
-                    }
-                    nxtStnTag = false
-                }
-            }
-        }
-
-        Log.d("TEST", nxtStn)
-
-        return nxtStn
     }
 
 }

@@ -19,6 +19,10 @@ import com.june0122.bis_sample.utils.decoration.BusRouteItemDecoration
 import com.june0122.bis_sample.utils.formatTime
 import kotlinx.android.synthetic.main.fragment_bus_route.*
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.*
+import kotlinx.android.synthetic.main.layout_appbar_bus_route.appbarMapButton
+import kotlinx.android.synthetic.main.layout_appbar_bus_route.backButtonImageView
+import kotlinx.android.synthetic.main.layout_appbar_bus_route.toolbarBusRouteMapButton
+import kotlinx.android.synthetic.main.layout_appbar_bus_route.toolbarHomeButton
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -30,6 +34,8 @@ class BusRouteFragment : Fragment() {
     private val routeData = arrayListOf<RouteData>()
     private val stationList = arrayListOf<StationList>()
     private val busRouteAdapter = BusRouteAdapter()
+
+    private val busRouteMapFragment = BusRouteMapFragment()
 
     fun inputBusNumber(busNumber: String) {
         inputData = busNumber
@@ -86,6 +92,17 @@ class BusRouteFragment : Fragment() {
         }
 
         toolbarBusNumberTextView.isSelected = true
+
+
+        appbarMapButton.setOnClickListener {
+            busRouteMapFragment.inputBusRouteId(searchBusRouteInfo(inputData))
+
+            activity?.supportFragmentManager
+                    ?.beginTransaction()
+                    ?.replace(R.id.fragmentContainer, busRouteMapFragment)
+                    ?.addToBackStack(null)?.commit()
+        }
+
 
         val busRouteAppBarLayout: AppBarLayout? = view.findViewById(R.id.busRouteAppbar)
 

@@ -23,6 +23,14 @@ data class BusList(
         val secondArrivalBusInfo: String
 )
 
+data class RoutePathData(
+        val pathNumber: String,
+        val wgs84X: String,
+        val wgs84Y: String,
+        val grs80X: String,
+        val grs80Y: String
+)
+
 data class RouteData(
         val busRouteId: String,
         val busRouteNumber: String,
@@ -55,8 +63,7 @@ data class StationPreviewData(
         val wgs84X: String,
         val wgs84Y: String,
         val grs80X: String,
-        val grs80Y: String,
-        val nxtStn: String
+        val grs80Y: String
 )
 
 class Data {

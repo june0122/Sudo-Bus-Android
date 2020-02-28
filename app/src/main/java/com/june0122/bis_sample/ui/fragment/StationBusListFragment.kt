@@ -1,27 +1,22 @@
 package com.june0122.bis_sample.ui.fragment
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.BusList
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.ui.adapter.StationBusListAdapter
 import com.june0122.bis_sample.utils.createParser
 import kotlinx.android.synthetic.main.fragment_station_bus_list.*
-import kotlinx.android.synthetic.main.fragment_station_location_map.*
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.*
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.backButtonImageView
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.stationNameTextView
@@ -85,7 +80,7 @@ class StationBusListFragment : Fragment() {
         }
 
         stationLocationMapFragment.setLatLng(lat, lng)
-        stationLocationMapFragment.inputUiText(busList[0].stationName, busList[0].arsId, busList[0].nextStation)
+        stationLocationMapFragment.inputStationInfo(busList[0].stationName, busList[0].arsId, busList[0].nextStation)
 
         appbarMapButton.setOnClickListener {
             activity?.supportFragmentManager

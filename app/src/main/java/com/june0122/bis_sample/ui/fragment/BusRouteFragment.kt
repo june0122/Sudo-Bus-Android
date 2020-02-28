@@ -97,6 +97,15 @@ class BusRouteFragment : Fragment() {
         appbarMapButton.setOnClickListener {
             busRouteMapFragment.inputBusRouteId(searchBusRouteInfo(inputData))
 
+            busRouteMapFragment.inputBusRouteInfo(
+                    routeData[0].busRouteName,
+                    routeData[0].startStationName,
+                    routeData[0].endStationName,
+                    "${routeData[0].firstTime} ~ ${routeData[0].lastTime}",
+                    routeData[0].term
+            )
+
+
             activity?.supportFragmentManager
                     ?.beginTransaction()
                     ?.replace(R.id.fragmentContainer, busRouteMapFragment)
@@ -469,15 +478,14 @@ class BusRouteFragment : Fragment() {
                             term = parser.text
 
                             val data = RouteData(
-                                    busRouteNm,
                                     busRouteId,
+                                    busRouteNm,
                                     routeType,
-                                    term,
                                     stStationNm,
                                     edStationNm,
+                                    term,
                                     firstBusTm,
                                     lastBusTm,
-                                    lastBusYn,
                                     corpNm
                             )
                             routeData.add(data)

@@ -87,6 +87,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:maxWidth="170dp"
+            android:singleLine="true"
+            android:maxLines="1"
             android:text="구산동"
             android:textColor="@android:color/black"
             android:textSize="16sp"
@@ -96,10 +100,14 @@
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
-            android:id="@+id/endStationNameTextView"
+            android:id="@+id/lastStationNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="170dp"
             android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:maxLines="1"
             android:text="상도동"
             android:textColor="@android:color/black"
             android:textSize="16sp"

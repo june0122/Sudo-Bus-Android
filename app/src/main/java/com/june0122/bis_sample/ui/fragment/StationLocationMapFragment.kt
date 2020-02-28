@@ -31,7 +31,7 @@ class StationLocationMapFragment : Fragment(), OnMapReadyCallback {
         lng = longitude
     }
 
-    fun inputUiText(stNm: String, arsId: String, nxtStn: String) {
+    fun inputStationInfo(stNm: String, arsId: String, nxtStn: String) {
         stationName = stNm
         stationArsId = arsId
         stationDirection = nxtStn
@@ -52,15 +52,15 @@ class StationLocationMapFragment : Fragment(), OnMapReadyCallback {
             setOnCameraIdleListener {
                 val cameraPositionAddress = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 3)
                 val formattedAddress = cameraPositionAddress[0].getAddressLine(0).toString()  // IndexOutOfBoundsException 예외 처리 필요
-                var exceptCountryNameAddress = ""
+                var shortAddress = ""
 
                 if (formattedAddress.contains("대한민국")) {
-                    exceptCountryNameAddress = formattedAddress.replace("대한민국", "")
+                    shortAddress = formattedAddress.replace("대한민국", "")
                 }
 
                 if (cameraPosition.zoom > 13f) {
                     mapLocationLayout.visibility = View.VISIBLE
-                    mapLocationTextView.text = exceptCountryNameAddress
+                    mapLocationTextView.text = shortAddress
                 } else {
                     mapLocationLayout.visibility = View.INVISIBLE
                 }

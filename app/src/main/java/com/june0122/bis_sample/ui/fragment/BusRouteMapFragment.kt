@@ -2,7 +2,6 @@ package com.june0122.bis_sample.ui.fragment
 
 import android.location.Geocoder
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +11,13 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RoutePathData
 import com.june0122.bis_sample.utils.createParser
 import kotlinx.android.synthetic.main.fragment_bus_route_map.*
-import kotlinx.android.synthetic.main.fragment_bus_route_map.mapLocationLayout
-import kotlinx.android.synthetic.main.fragment_bus_route_map.mapLocationTextView
-import kotlinx.android.synthetic.main.fragment_station_location_map.*
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -35,48 +32,64 @@ class BusRouteMapFragment : Fragment(), OnMapReadyCallback {
     private var lat: Double = 0.0
     private var lng: Double = 0.0
 
-//    private var lat: Double = 37.607963 // 임시 값
-//    private var lng: Double = 127.001598
+    private var routeName = ""
+    private var firstLocation = ""
+    private var lastLocation = ""
+    private var routeSchedule = ""
+    private var busTerm = ""
 
     fun inputBusRouteId(busRouteId: String) {
         inputData = busRouteId
     }
 
+    fun inputBusRouteInfo(rtNm: String, firstPos: String, lastPos: String, schedule: String, term: String) {
+        routeName = rtNm
+        firstLocation = firstPos
+        lastLocation = lastPos
+        routeSchedule = schedule
+        busTerm = term
+    }
+
     override fun onMapReady(p0: GoogleMap?) {
         val geocoder = Geocoder(context, Locale.KOREA)
-        var latLng = LatLng(lat, lng)
-        val markerOptions = MarkerOptions().position(latLng)
-        val zoomLevel = 17f
 
-        routePathData.forEach {
-            latLng = LatLng(it.wgs84X.toDouble(), it.wgs84Y.toDouble())
-            googleMap?.addMarker(markerOptions)
-        }
+        searchBusRoutePath(inputData)
 
         googleMap = p0
-        googleMap?.apply {
-//            addMarker(markerOptions)
-            moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel))
-            animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel))
 
+        val builder = LatLngBounds.Builder()
+
+        routePathData.forEach {
+            val markerOptions = MarkerOptions().position(LatLng(it.wgs84Y.toDouble(), it.wgs84X.toDouble()))
+            googleMap?.addMarker(markerOptions)
+            builder.include(markerOptions.position)
+        }
+
+        val bounds = builder.build()
+        val displayWidth = resources.displayMetrics.widthPixels
+        val displayHeight = resources.displayMetrics.heightPixels
+        val displayPadding: Int = (displayWidth * 0.2).toInt()
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, displayWidth, displayHeight, displayPadding)
+
+        googleMap?.apply {
+            moveCamera(cameraUpdate)
             setOnCameraIdleListener {
-                val cameraPositionAddress = geocoder.getFromLocation(37.607963, 127.001598, 3)
+                val cameraPositionAddress = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 3)
                 val formattedAddress = cameraPositionAddress[0].getAddressLine(0).toString()  // IndexOutOfBoundsException 예외 처리 필요
-                var exceptCountryNameAddress = ""
+                var shortAddress = ""
 
                 if (formattedAddress.contains("대한민국")) {
-                    exceptCountryNameAddress = formattedAddress.replace("대한민국", "")
+                    shortAddress = formattedAddress.replace("대한민국", "")
                 }
 
                 if (cameraPosition.zoom > 13f) {
                     mapLocationLayout.visibility = View.VISIBLE
-                    mapLocationTextView.text = exceptCountryNameAddress
+                    mapLocationTextView.text = shortAddress
                 } else {
                     mapLocationLayout.visibility = View.INVISIBLE
                 }
-
-                Log.d("LATLNG", "${geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)}")
             }
+
         }
 
     }
@@ -89,16 +102,18 @@ class BusRouteMapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         val mapFragment: SupportMapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-
         mapFragment.getMapAsync(this)
 
         busRouteMapBackButton.setOnClickListener {
             activity?.onBackPressed()
         }
 
-        searchBusRoutePath(inputData)
+        busRouteNameTextView.text = routeName
+        firstStationNameTextView.text = firstLocation
+        lastStationNameTextView.text = lastLocation
+        busRouteScheduleTextView.text = routeSchedule
+        busTermTextView.text = resources.getString(R.string.bus_term, busTerm)
 
-//        Log.d("XXXX", "${routePathData[0]}")
     }
 
 
@@ -174,11 +189,5 @@ class BusRouteMapFragment : Fragment(), OnMapReadyCallback {
             }
             parserEvent = parser.next()
         }
-
-//        stationBusListAdapter.apply {
-//            items.clear()
-//            items.addAll(busList)
-//            notifyDataSetChanged()
-//        }
     }
 }

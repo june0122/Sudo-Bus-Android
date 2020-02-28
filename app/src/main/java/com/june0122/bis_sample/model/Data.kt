@@ -33,8 +33,7 @@ data class RoutePathData(
 
 data class RouteData(
         val busRouteId: String,
-        val busRouteNumber: String,
-        val routeLength: String,
+        val busRouteName: String,
         val routeType: String,
         val startStationName: String,
         val endStationName: String,

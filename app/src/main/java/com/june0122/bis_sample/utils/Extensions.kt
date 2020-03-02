@@ -85,7 +85,7 @@ fun setStrictMode() {
 }
 
 
-fun checkBusType(busTypeNumber: String): String {
+fun checkBusType(busTypeNumber: String?): String {
     return when (busTypeNumber) {
         "0" -> "공용"
         "1" -> "공항"

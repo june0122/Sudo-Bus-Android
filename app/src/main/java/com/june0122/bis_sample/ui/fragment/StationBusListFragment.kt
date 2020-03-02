@@ -34,7 +34,6 @@ class StationBusListFragment : Fragment() {
     private val busList = arrayListOf<BusList>()
     private val stationBusListAdapter = StationBusListAdapter()
 
-    private val stationLocationMapFragment = StationLocationMapFragment()
     private var lat : Double = 0.0
     private var lng : Double = 0.0
 
@@ -81,10 +80,13 @@ class StationBusListFragment : Fragment() {
                     ?.addToBackStack(null)?.commit()
         }
 
-        stationLocationMapFragment.setLatLng(lat, lng)
-        stationLocationMapFragment.inputStationInfo(busList[0].stationName, busList[0].arsId, busList[0].nextStation)
 
         appbarMapButton.setOnClickListener {
+            val stationLocationMapFragment = StationLocationMapFragment()
+
+            stationLocationMapFragment.setLatLng(lat, lng)
+            stationLocationMapFragment.inputStationInfo(busList[0].stationName, busList[0].arsId, busList[0].nextStation)
+
             activity?.supportFragmentManager
                 ?.beginTransaction()
                 ?.replace(R.id.fragmentContainer, stationLocationMapFragment)

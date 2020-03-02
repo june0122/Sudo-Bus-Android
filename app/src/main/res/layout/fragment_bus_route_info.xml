@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/gray"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/busRouteInfoActionBarLayout"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/busRouteInfoBackButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:tint="@color/mine_shaft"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:id="@+id/busRouteNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="753"
+            android:textColor="@android:color/holo_orange_dark"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.44"
+            app:layout_constraintStart_toEndOf="@+id/busRouteInfoBackButton"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/busRouteInfoActionBarLayout">
+
+        <View
+            android:id="@+id/busRouteInfoDivider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:background="#E9E9E9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/busTypeTextView" />
+
+        <ImageView
+            android:id="@+id/busImageView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:tint="@android:color/holo_orange_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_bus_front" />
+
+        <View
+            android:id="@+id/busRouteInfoDivider2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:background="#E9E9E9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/busScheduleDataTextView" />
+
+        <ImageView
+            android:id="@+id/clockImageView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:tint="@android:color/holo_orange_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/busRouteInfoDivider"
+            app:srcCompat="@drawable/ic_schedule" />
+
+        <ImageView
+            android:id="@+id/hourGlassImageView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:tint="@android:color/holo_orange_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/busRouteInfoDivider2"
+            app:srcCompat="@drawable/ic_hourglass" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="운행지역"
+            android:textColor="@android:color/holo_orange_dark"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/busImageView"
+            app:layout_constraintStart_toEndOf="@+id/busImageView"
+            app:layout_constraintTop_toTopOf="@+id/busImageView" />
+
+        <TextView
+            android:id="@+id/startStationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="구산동"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/busImageView"
+            app:layout_constraintTop_toBottomOf="@+id/busImageView" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:tint="@color/dark_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/startStationTextView"
+            app:layout_constraintStart_toEndOf="@+id/startStationTextView"
+            app:layout_constraintTop_toTopOf="@+id/startStationTextView"
+            app:srcCompat="@drawable/ic_both_side_arrow" />
+
+        <TextView
+            android:id="@+id/endStationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="상도동"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/startStationTextView"
+            app:layout_constraintStart_toEndOf="@+id/imageView4"
+            app:layout_constraintTop_toTopOf="@+id/startStationTextView" />
+
+        <TextView
+            android:id="@+id/busTypeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="서울 간선버스"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/startStationTextView"
+            app:layout_constraintTop_toBottomOf="@+id/startStationTextView" />
+
+        <TextView
+            android:id="@+id/busScheduleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="운행시간"
+            android:textColor="@android:color/holo_orange_dark"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/clockImageView"
+            app:layout_constraintStart_toEndOf="@+id/clockImageView"
+            app:layout_constraintTop_toTopOf="@+id/clockImageView" />
+
+        <TextView
+            android:id="@+id/busScheduleDataTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="04:10 ~ 22:00"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/clockImageView"
+            app:layout_constraintTop_toBottomOf="@+id/clockImageView" />
+
+        <TextView
+            android:id="@+id/busTermTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="배차간격"
+            android:textColor="@android:color/holo_orange_dark"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/hourGlassImageView"
+            app:layout_constraintStart_toEndOf="@+id/hourGlassImageView"
+            app:layout_constraintTop_toTopOf="@+id/hourGlassImageView" />
+
+        <TextView
+            android:id="@+id/busTermDataTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            android:text="12분"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/hourGlassImageView"
+            app:layout_constraintTop_toBottomOf="@+id/hourGlassImageView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

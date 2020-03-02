@@ -35,8 +35,6 @@ class BusRouteFragment : Fragment() {
     private val routeData = arrayListOf<RouteData>()
     private val stationList = arrayListOf<StationList>()
     private val busRouteAdapter = BusRouteAdapter()
-    private val busRouteMapFragment = BusRouteMapFragment()
-
 
     fun inputBusNumber(busNumber: String) {
         inputData = busNumber
@@ -94,8 +92,51 @@ class BusRouteFragment : Fragment() {
 
         toolbarBusNumberTextView.isSelected = true
 
+        toolbarBusInfoButton.setOnClickListener {
+            val busRouteInfoFragment = BusRouteInfoFragment()
+
+            busRouteInfoFragment.inputRouteInfo(routeData[0])
+
+            activity?.supportFragmentManager
+                    ?.beginTransaction()
+                    ?.replace(R.id.fragmentContainer, busRouteInfoFragment)
+                    ?.addToBackStack(null)?.commit()
+        }
+
+        appbarBusInfoButton.setOnClickListener {
+            val busRouteInfoFragment = BusRouteInfoFragment()
+
+            busRouteInfoFragment.inputRouteInfo(routeData[0])
+
+            activity?.supportFragmentManager
+                    ?.beginTransaction()
+                    ?.replace(R.id.fragmentContainer, busRouteInfoFragment)
+                    ?.addToBackStack(null)?.commit()
+        }
+
+        toolbarBusRouteMapButton.setOnClickListener {
+            val busRouteMapFragment = BusRouteMapFragment()
+
+            busRouteMapFragment.inputBusRouteId(searchBusRouteInfo(inputData))
+
+            busRouteMapFragment.inputBusRouteInfo(
+                    routeData[0].busRouteName,
+                    routeData[0].startStationName,
+                    routeData[0].endStationName,
+                    "${routeData[0].firstTime} ~ ${routeData[0].lastTime}",
+                    routeData[0].term
+            )
+
+
+            activity?.supportFragmentManager
+                    ?.beginTransaction()
+                    ?.replace(R.id.fragmentContainer, busRouteMapFragment)
+                    ?.addToBackStack(null)?.commit()
+        }
 
         appbarMapButton.setOnClickListener {
+            val busRouteMapFragment = BusRouteMapFragment()
+
             busRouteMapFragment.inputBusRouteId(searchBusRouteInfo(inputData))
 
             busRouteMapFragment.inputBusRouteInfo(
@@ -125,7 +166,8 @@ class BusRouteFragment : Fragment() {
             Log.d("APPBAR", "height : ${busRouteCollapsingToolbarLayout.height}")
 
             if (verticalOffset in -totalScrollRange..-visibleTriggerHeight) {
-                ratio = (verticalOffset.toFloat() + visibleTriggerHeight) / (appBarLayout.totalScrollRange.toFloat() - visibleTriggerHeight)
+                ratio =
+                        (verticalOffset.toFloat() + visibleTriggerHeight) / (appBarLayout.totalScrollRange.toFloat() - visibleTriggerHeight)
 
                 toolbarBusNumberTextView.alpha = abs(ratio)
                 toolbarBusInfoButton.alpha = abs(ratio)
@@ -535,7 +577,7 @@ class BusRouteFragment : Fragment() {
 
         Log.d("XXX", "$stStationNm ~ $edStationNm")
 
-        busTypeTextView.text = checkBusType(routeType)
+        busTypeTextView.text = resources.getString(R.string.bus_type, checkBusType(routeType))
         busNumberTextView.text = busRouteNm
         toolbarBusNumberTextView.text = busRouteNm
         firstStationNameTextView.text = stStationNm

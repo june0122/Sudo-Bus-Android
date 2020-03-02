@@ -19,7 +19,7 @@ class BusRouteAdapter : RecyclerView.Adapter<BusRouteViewHolder>() {
 
         with(holder.itemView) {
             stationNameTextView.text = model.stationName
-            stationArsIdTextView.text = model.stationId
+            stationArsIdTextView.text = model.stationArsId
             stationScheduleTextView.text = resources.getString(R.string.station_schedule, model.firstTime, model.lastTime)
         }
     }

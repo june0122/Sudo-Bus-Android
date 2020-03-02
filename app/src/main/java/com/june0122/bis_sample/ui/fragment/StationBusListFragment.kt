@@ -15,6 +15,7 @@ import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.BusList
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.ui.adapter.StationBusListAdapter
+import com.june0122.bis_sample.utils.RecyclerItemClickListener
 import com.june0122.bis_sample.utils.createParser
 import kotlinx.android.synthetic.main.fragment_station_bus_list.*
 import kotlinx.android.synthetic.main.layout_appbar_station_bus_list.*
@@ -55,6 +56,7 @@ class StationBusListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         val stationBusListLayoutManager = LinearLayoutManager(context)
         busListRecyclerView.layoutManager = stationBusListLayoutManager
         stationBusListLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -88,6 +90,26 @@ class StationBusListFragment : Fragment() {
                 ?.replace(R.id.fragmentContainer, stationLocationMapFragment)
                 ?.addToBackStack(null)?.commit()
         }
+
+        busListRecyclerView.addOnItemTouchListener(
+                RecyclerItemClickListener(
+                        view.context,
+                        busListRecyclerView,
+                        object : RecyclerItemClickListener.OnItemClickListener{
+                            override fun onItemClick(view: View, position: Int) {
+
+                                val busRouteFragment = BusRouteFragment()
+
+                                busRouteFragment.inputBusNumber(stationBusListAdapter.items[position].busNumber)
+
+                                activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.replace(R.id.fragmentContainer, busRouteFragment)
+                                        ?.addToBackStack(null)?.commit()
+                            }
+                        }
+                )
+        )
 
 
         refreshFAB.setOnClickListener {

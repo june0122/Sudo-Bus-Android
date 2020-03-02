@@ -24,7 +24,6 @@ class PreviewStationFragment : Fragment() {
     private var inputData: String = ""
     private val stationPreviewDataList = arrayListOf<StationPreviewData>()
     private val previewStationAdapter = PreviewStationAdapter()
-    private val stationBusListFragment = StationBusListFragment()
 
     fun inputStationArsId(stationArsId: String) {
         inputData = stationArsId
@@ -67,6 +66,8 @@ class PreviewStationFragment : Fragment() {
                                     Toast.makeText(context, "해당 정류소의 정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                                     return
                                 }
+
+                                val stationBusListFragment = StationBusListFragment()
 
                                 stationBusListFragment.inputArsId(previewStationAdapter.items[position].stationArsId)
                                 stationBusListFragment.inputLatLng(

@@ -13,6 +13,7 @@ import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RouteData
 import com.june0122.bis_sample.model.StationList
 import com.june0122.bis_sample.ui.adapter.BusRouteAdapter
+import com.june0122.bis_sample.utils.RecyclerItemClickListener
 import com.june0122.bis_sample.utils.checkBusType
 import com.june0122.bis_sample.utils.createParser
 import com.june0122.bis_sample.utils.decoration.BusRouteItemDecoration
@@ -34,8 +35,8 @@ class BusRouteFragment : Fragment() {
     private val routeData = arrayListOf<RouteData>()
     private val stationList = arrayListOf<StationList>()
     private val busRouteAdapter = BusRouteAdapter()
-
     private val busRouteMapFragment = BusRouteMapFragment()
+
 
     fun inputBusNumber(busNumber: String) {
         inputData = busNumber
@@ -112,7 +113,6 @@ class BusRouteFragment : Fragment() {
                     ?.addToBackStack(null)?.commit()
         }
 
-
         val busRouteAppBarLayout: AppBarLayout? = view.findViewById(R.id.busRouteAppbar)
 
         busRouteAppBarLayout?.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -139,6 +139,30 @@ class BusRouteFragment : Fragment() {
                 toolbarBusRouteMapButton.alpha = abs(ratio)
             }
         })
+
+
+        busRouteRecyclerView.addOnItemTouchListener(
+                RecyclerItemClickListener(
+                        view.context,
+                        busRouteRecyclerView,
+                        object : RecyclerItemClickListener.OnItemClickListener {
+                            override fun onItemClick(view: View, position: Int) {
+
+                                val stationBusListFragment = StationBusListFragment()
+
+                                stationBusListFragment.inputArsId(busRouteAdapter.items[position].stationArsId)
+                                stationBusListFragment.inputLatLng(
+                                        busRouteAdapter.items[position].wgs84Y.toDouble(),
+                                        busRouteAdapter.items[position].wgs84X.toDouble()
+                                )
+
+                                activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.replace(R.id.fragmentContainer, stationBusListFragment)
+                                        ?.addToBackStack(null)?.commit()
+                            }
+                        })
+        )
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
@@ -330,7 +354,9 @@ class BusRouteFragment : Fragment() {
                                     arsId,
                                     beginTm,
                                     lastTm,
-                                    routeType
+                                    routeType,
+                                    gpsX,
+                                    gpsY
                             )
                             stationList.add(data)
                         }
@@ -366,7 +392,7 @@ class BusRouteFragment : Fragment() {
         busRouteAdapter.notifyDataSetChanged()
 
         stationList.forEach {
-            Log.d("XXX", "${it.stationName} ${it.stationId} | ${it.firstTime} ~ ${it.lastTime}")
+            Log.d("XXX", "${it.stationName} ${it.stationArsId} | ${it.firstTime} ~ ${it.lastTime}")
             Log.d(
                     "XXX",
                     "$direction $gpsX $gpsY $lastTm $posX $posY $routeType $sectSpd $section $seq $station $stationNo $transYn $fullSectDist $trnstnid"

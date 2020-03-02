@@ -22,7 +22,6 @@ class PreviewBusFragment : Fragment() {
     private var inputData: String = ""
     private val busData = arrayListOf<BusData>()
     private val previewBusAdapter = PreviewBusAdapter()
-    private val busRouteFragment = BusRouteFragment()
 
     fun inputBusNumber(busNumber: String) {
         inputData = busNumber
@@ -52,20 +51,14 @@ class PreviewBusFragment : Fragment() {
                 RecyclerItemClickListener(view.context, previewBusRecyclerView, object : RecyclerItemClickListener.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
 
+                        val busRouteFragment = BusRouteFragment()
+
                         busRouteFragment.inputBusNumber(previewBusAdapter.items[position].busNumber)
 
                         activity?.supportFragmentManager
                                 ?.beginTransaction()
                                 ?.replace(R.id.fragmentContainer, busRouteFragment)
                                 ?.addToBackStack(null)?.commit()
-
-//                        childFragmentManager
-//                                .beginTransaction()
-//                                .replace(
-//                                        R.id.fragmentContainer,
-//                                        BusRouteFragment(previewBusAdapter.items[position].busNumber),
-//                                        BusRouteFragment::class.java.name
-//                                ).commit()
                     }
                 })
         )

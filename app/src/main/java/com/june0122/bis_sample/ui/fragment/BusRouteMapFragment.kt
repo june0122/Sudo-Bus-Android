@@ -1,5 +1,6 @@
 package com.june0122.bis_sample.ui.fragment
 
+import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RoutePathData
@@ -25,18 +27,17 @@ import java.net.URL
 import java.util.*
 
 class BusRouteMapFragment : Fragment(), OnMapReadyCallback {
-    var routePathData = arrayListOf<RoutePathData>()
-    private var inputData: String = ""
+    private var routePathData = arrayListOf<RoutePathData>()
     private var googleMap: GoogleMap? = null
-
-    private var lat: Double = 0.0
-    private var lng: Double = 0.0
+    private var inputData: String = ""
 
     private var routeName = ""
     private var firstLocation = ""
     private var lastLocation = ""
     private var routeSchedule = ""
     private var busTerm = ""
+
+    private var polylineOptions : PolylineOptions? = null
 
     fun inputBusRouteId(busRouteId: String) {
         inputData = busRouteId
@@ -60,7 +61,13 @@ class BusRouteMapFragment : Fragment(), OnMapReadyCallback {
         val builder = LatLngBounds.Builder()
 
         routePathData.forEach {
-            val markerOptions = MarkerOptions().position(LatLng(it.wgs84Y.toDouble(), it.wgs84X.toDouble()))
+            val markerOptions = MarkerOptions().position(LatLng(it.wgs84Y.toDouble(), it.wgs84X.toDouble())).visible(false)
+
+            val polyline = googleMap?.addPolyline(PolylineOptions().color(Color.GREEN).width(10f).clickable(true).add(LatLng(it.wgs84Y.toDouble(), it.wgs84X.toDouble())))
+
+            polyline?.tag = "A"
+
+
             googleMap?.addMarker(markerOptions)
             builder.include(markerOptions.position)
         }
@@ -72,6 +79,8 @@ class BusRouteMapFragment : Fragment(), OnMapReadyCallback {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, displayWidth, displayHeight, displayPadding)
 
         googleMap?.apply {
+
+
             moveCamera(cameraUpdate)
             setOnCameraIdleListener {
                 val cameraPositionAddress = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 3)

@@ -5,10 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import com.google.android.material.appbar.AppBarLayout
 import com.june0122.bis_sample.R
+import com.june0122.bis_sample.model.BusLocationData
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RouteData
 import com.june0122.bis_sample.model.StationList
@@ -19,6 +23,9 @@ import com.june0122.bis_sample.utils.createParser
 import com.june0122.bis_sample.utils.decoration.BusRouteItemDecoration
 import com.june0122.bis_sample.utils.formatTime
 import kotlinx.android.synthetic.main.fragment_bus_route.*
+import kotlinx.android.synthetic.main.fragment_bus_route.refreshFAB
+import kotlinx.android.synthetic.main.fragment_bus_route.view.*
+import kotlinx.android.synthetic.main.fragment_station_bus_list.*
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.*
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.appbarMapButton
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.backButtonImageView
@@ -33,6 +40,7 @@ import kotlin.math.abs
 class BusRouteFragment : Fragment() {
     private var inputData: String = ""
     private val routeData = arrayListOf<RouteData>()
+    private val busLocationData = arrayListOf<BusLocationData>()
     private val stationList = arrayListOf<StationList>()
     private val busRouteAdapter = BusRouteAdapter()
 
@@ -51,6 +59,9 @@ class BusRouteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(view.busRouteRecyclerView)
+
         val busRouteLayoutManager = LinearLayoutManager(context)
         busRouteRecyclerView.layoutManager = busRouteLayoutManager
         busRouteLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -61,7 +72,9 @@ class BusRouteFragment : Fragment() {
         busRouteRecyclerView.addItemDecoration(
                 BusRouteItemDecoration(
                         context,
-                        busRouteAdapter.itemCount
+                        busRouteAdapter.itemCount,
+                        snapHelper,
+                        busLocationData
                 )
         )
 
@@ -72,6 +85,7 @@ class BusRouteFragment : Fragment() {
                 else -> {
                     searchBusRouteInfo(inputData)
                     searchBusRoute(searchBusRouteInfo(inputData))
+                    searchBusLocationInfo(searchBusRouteInfo(inputData))
                 }
             }
         }
@@ -205,6 +219,29 @@ class BusRouteFragment : Fragment() {
                             }
                         })
         )
+
+        refreshFAB.setOnClickListener {
+            refreshFAB.animate()
+                    .rotationBy(180f)
+                    .setDuration(300)
+                    .scaleX(1.2f)
+                    .scaleY(1.2f)
+                    .setInterpolator(AccelerateInterpolator())
+                    .withEndAction {
+                        refreshFAB.animate()
+                                .rotationBy(180f)
+                                .setDuration(300)
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setInterpolator(DecelerateInterpolator())
+                                .start()
+                    }
+                    .start()
+
+            busLocationData.clear()
+            searchBusLocationInfo(searchBusRouteInfo(inputData))
+
+        }
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
@@ -394,6 +431,7 @@ class BusRouteFragment : Fragment() {
                                     busRouteNm,
                                     stationNm,
                                     arsId,
+                                    sectSpd,
                                     beginTm,
                                     lastTm,
                                     routeType,
@@ -434,11 +472,13 @@ class BusRouteFragment : Fragment() {
         busRouteAdapter.notifyDataSetChanged()
 
         stationList.forEach {
-            Log.d("XXX", "${it.stationName} ${it.stationArsId} | ${it.firstTime} ~ ${it.lastTime}")
-            Log.d(
-                    "XXX",
-                    "$direction $gpsX $gpsY $lastTm $posX $posY $routeType $sectSpd $section $seq $station $stationNo $transYn $fullSectDist $trnstnid"
-            )
+//            Log.d("XXX", "${it.stationName} ${it.stationArsId} | ${it.firstTime} ~ ${it.lastTime}")
+//            Log.d(
+//                    "XXX",
+//                    "$direction $gpsX $gpsY $lastTm $posX $posY $routeType $sectSpd $section $seq $station $stationNo $transYn $fullSectDist $trnstnid"
+//            )
+
+            Log.d("SectSpd", "[${it.stationName} 구간 속도] ${it.sectionSpeed}")
         }
 
     }
@@ -584,5 +624,270 @@ class BusRouteFragment : Fragment() {
         endStationNameTextView.text = edStationNm
 
         return busRouteId
+    }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    fun searchBusLocationInfo(busRouteId: String) {
+        val url =
+                URL("http://ws.bus.go.kr/api/rest/buspos/getBusPosByRtid?ServiceKey=$SERVICE_KEY&busRouteId=$busRouteId")
+
+        val parser = createParser(url).parser
+        var parserEvent = createParser(url).parserEvent
+
+        var busTypeTag = false
+        var congetionTag = false
+        var dataTmTag = false
+        var fullSectDistTag = false
+        var gpsXTag = false
+        var gpsYTag = false
+        var isFullFlagTag = false
+        var islastynTag = false
+        var isrunynTag = false
+        var lastStTmTag = false
+        var lastStnIdTag = false
+        var nextStIdTag = false
+        var nextStTmTag = false
+        var plainNoTag = false
+        var posXTag = false
+        var posYTag = false
+        var rtDistTag = false
+        var sectDistTag = false
+        var sectOrdTag = false
+        var sectionIdTag = false
+        var stopFlagTag = false
+        var trnstnidTag = false
+        var vehIdTag = false
+
+        var busType = ""
+        var congetion = ""
+        var dataTm = ""
+        var fullSectDist = ""
+        var gpsX = ""
+        var gpsY = ""
+        var isFullFlag = ""
+        var islastyn = ""
+        var isrunyn = ""
+        var lastStTm = ""
+        var lastStnId = ""
+        var nextStId = ""
+        var nextStTm = ""
+        var plainNo = ""
+        var posX = ""
+        var posY = ""
+        var rtDist = ""
+        var sectDist = ""
+        var sectOrd = ""
+        var sectionId = ""
+        var stopFlag = ""
+        var trnstnid = ""
+        var vehId = ""
+
+        while (parserEvent != XmlPullParser.END_DOCUMENT) {
+            when (parserEvent) {
+                XmlPullParser.START_TAG -> {
+                    when (parser.name) {
+                        "busType" -> {
+                            busTypeTag = true
+                        }
+                        "congetion" -> {
+                            congetionTag = true
+                        }
+                        "dataTm" -> {
+                            dataTmTag = true
+                        }
+                        "fullSectDist" -> {
+                            fullSectDistTag = true
+                        }
+                        "gpsX" -> {
+                            gpsXTag = true
+                        }
+                        "gpsY" -> {
+                            gpsYTag = true
+                        }
+                        "isFullFlag" -> {
+                            isFullFlagTag = true
+                        }
+                        "islastyn" -> {
+                            islastynTag = true
+                        }
+                        "isrunyn" -> {
+                            isrunynTag = true
+                        }
+                        "lastStTm" -> {
+                            lastStTmTag = true
+                        }
+                        "lastStnId" -> {
+                            lastStnIdTag = true
+                        }
+                        "nextStId" -> {
+                            nextStIdTag = true
+                        }
+                        "nextStTm" -> {
+                            nextStTmTag = true
+                        }
+                        "plainNo" -> {
+                            plainNoTag = true
+                        }
+                        "posX" -> {
+                            posXTag = true
+                        }
+                        "posY" -> {
+                            posYTag = true
+                        }
+                        "rtDist" -> {
+                            rtDistTag = true
+                        }
+                        "sectDist" -> {
+                            sectDistTag = true
+                        }
+                        "sectOrd" -> {
+                            sectOrdTag = true
+                        }
+                        "sectionId" -> {
+                            sectionIdTag = true
+                        }
+                        "stopFlag" -> {
+                            stopFlagTag = true
+                        }
+                        "trnstnid" -> {
+                            trnstnidTag = true
+                        }
+                        "vehId" -> {
+                            vehIdTag = true
+                        }
+                    }
+                }
+
+                XmlPullParser.TEXT -> {
+                    when {
+                        busTypeTag -> {
+                            busType = parser.text
+                        }
+                        congetionTag -> {
+                            congetion = parser.text
+                        }
+                        dataTmTag -> {
+                            dataTm = parser.text
+                        }
+                        fullSectDistTag -> {
+                            fullSectDist = parser.text
+                        }
+                        gpsXTag -> {
+                            gpsX = parser.text
+                        }
+                        gpsYTag -> {
+                            gpsY = parser.text
+                        }
+                        isFullFlagTag -> {
+                            isFullFlag = parser.text
+                        }
+                        islastynTag -> {
+                            islastyn = parser.text
+                        }
+                        isrunynTag -> {
+                            isrunyn = parser.text
+                        }
+                        lastStTmTag -> {
+                            lastStTm = parser.text
+                        }
+                        lastStnIdTag -> {
+                            lastStnId = parser.text
+                        }
+                        nextStIdTag -> {
+                            nextStId = parser.text
+                        }
+                        nextStTmTag -> {
+                            nextStTm = parser.text
+                        }
+                        plainNoTag -> {
+                            plainNo = parser.text
+                        }
+                        posXTag -> {
+                            posX = parser.text
+                        }
+                        posYTag -> {
+                            posY = parser.text
+                        }
+                        rtDistTag -> {
+                            rtDist = parser.text
+                        }
+                        sectDistTag -> {
+                            sectDist = parser.text
+                        }
+                        sectOrdTag -> {
+                            sectOrd = parser.text
+                        }
+                        sectionIdTag -> {
+                            sectionId = parser.text
+                        }
+                        stopFlagTag -> {
+                            stopFlag = parser.text
+                        }
+                        trnstnidTag -> {
+                            trnstnid = parser.text
+                        }
+                        vehIdTag -> {
+                            vehId = parser.text
+
+                            val data = BusLocationData(
+                                    sectOrd,
+                                    sectDist,
+                                    fullSectDist,
+                                    stopFlag,
+                                    sectionId,
+                                    dataTm,
+                                    gpsX,
+                                    gpsY,
+                                    vehId,
+                                    plainNo,
+                                    busType,
+                                    isrunyn,
+                                    trnstnid,
+                                    islastyn,
+                                    isFullFlag,
+                                    lastStnId,
+                                    congetion
+                            )
+                            busLocationData.add(data)
+                        }
+                    }
+
+                    busTypeTag = false
+                    congetionTag = false
+                    dataTmTag = false
+                    fullSectDistTag = false
+                    gpsXTag = false
+                    gpsYTag = false
+                    isFullFlagTag = false
+                    islastynTag = false
+                    isrunynTag = false
+                    lastStTmTag = false
+                    lastStnIdTag = false
+                    nextStIdTag = false
+                    nextStTmTag = false
+                    plainNoTag = false
+                    posXTag = false
+                    posYTag = false
+                    rtDistTag = false
+                    sectDistTag = false
+                    sectOrdTag = false
+                    sectionIdTag = false
+                    stopFlagTag = false
+                    trnstnidTag = false
+                    vehIdTag = false
+                }
+            }
+            parserEvent = parser.next()
+        }
+
+        busRouteAdapter.items.clear()
+        busRouteAdapter.items.addAll(stationList)
+        busRouteAdapter.notifyDataSetChanged()
+
+        busLocationData.forEach {
+            Log.d("BUSLOCATIONDATA", "[구간 순번] ${it.sectionOrder}, [버스 번호] ${it.plainBusNumber} , [혼잡도] ${it.busCongestion}," +
+                    "[타입] ${it.type}, [정류소 간 거리] ${it.fullSectionDistance}, [정류장 구간 이동거리] ${it.sectionDistance} " +
+                    "[정류소 도착 여부] ${it.stationArrivalFlag}, [회차지 정류소 ID] ${it.turningStationId}")
+        }
     }
 }

@@ -9,6 +9,7 @@ data class StationList(
     val busRouteName: String,
     val stationName: String,
     val stationArsId: String,
+    val sectionSpeed: String,
     val firstTime: String,
     val lastTime: String,
     val routeType: String,
@@ -55,6 +56,26 @@ data class BusData(
         val firstTime: String,
         val lastTime: String,
         val lastBusPresence: String
+)
+
+data class BusLocationData(
+        val sectionOrder: String,
+        val sectionDistance: String,
+        val fullSectionDistance: String,
+        val stationArrivalFlag: String,
+        val sectionID: String,
+        val dataUpdateTime: String,
+        val wgs84X: String,
+        val wgs84Y: String,
+        val vehicleId: String,
+        val plainBusNumber: String,
+        val type: String,
+        val busRunningFlag: String,
+        val turningStationId: String,
+        val lastBusFlag: String,
+        val fullBusFlag: String,
+        val lastStationId: String,
+        val busCongestion: String
 )
 
 data class StationPreviewData(

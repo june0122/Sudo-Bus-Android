@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/busRouteItemLayout"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:orientation="vertical">
@@ -10,11 +11,11 @@
         android:id="@+id/bottomDivider"
         android:layout_width="2.5dp"
         android:layout_height="30dp"
+        android:background="@color/yellow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/busDirectionImageView"
         app:layout_constraintStart_toStartOf="@+id/busDirectionImageView"
-        app:layout_constraintTop_toBottomOf="@+id/topDivider"
-        android:background="@color/yellow" />
+        app:layout_constraintTop_toBottomOf="@+id/topDivider" />
 
     <View
         android:id="@+id/topDivider"
@@ -86,5 +87,46 @@
         app:layout_constraintBottom_toBottomOf="@+id/stationArsIdTextView"
         app:layout_constraintStart_toEndOf="@+id/textDivider"
         app:layout_constraintTop_toTopOf="@+id/stationArsIdTextView" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/turingStationLayout"
+        android:layout_width="32dp"
+        android:layout_height="15dp"
+        android:background="@drawable/bg_rounded_rectangle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/bottomDivider"
+        app:layout_constraintEnd_toEndOf="@+id/topDivider"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="@+id/topDivider"
+        app:layout_constraintTop_toTopOf="@+id/topDivider">
+
+        <TextView
+            android:id="@+id/turningStationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:text="회차"
+            android:textSize="6sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/turingArrowImageView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/turingArrowImageView"
+            android:layout_width="9dp"
+            android:layout_height="9dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/turningStationTextView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_turning_arrow" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

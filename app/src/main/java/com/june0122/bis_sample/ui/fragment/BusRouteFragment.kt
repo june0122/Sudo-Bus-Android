@@ -175,9 +175,9 @@ class BusRouteFragment : Fragment() {
             val totalScrollRange = busRouteAppBarLayout.totalScrollRange
             val visibleTriggerHeight = 250
 
-            Log.d("APPBAR", "verticalOffset : $verticalOffset")
-            Log.d("APPBAR", "totalScrollRange : ${busRouteAppBarLayout.totalScrollRange}")
-            Log.d("APPBAR", "height : ${busRouteCollapsingToolbarLayout.height}")
+//            Log.d("APPBAR", "verticalOffset : $verticalOffset")
+//            Log.d("APPBAR", "totalScrollRange : ${busRouteAppBarLayout.totalScrollRange}")
+//            Log.d("APPBAR", "height : ${busRouteCollapsingToolbarLayout.height}")
 
             if (verticalOffset in -totalScrollRange..-visibleTriggerHeight) {
                 ratio =
@@ -880,8 +880,9 @@ class BusRouteFragment : Fragment() {
             parserEvent = parser.next()
         }
 
-        busRouteAdapter.items.clear()
-        busRouteAdapter.items.addAll(stationList)
+        // 실시간 버스 위치 아이템데코레이션 업데이트에 필요한 코드가 무엇인지 파악 필요
+//        busRouteAdapter.items.clear()
+//        busRouteAdapter.items.addAll(stationList)
         busRouteAdapter.notifyDataSetChanged()
 
         busLocationData.forEach {

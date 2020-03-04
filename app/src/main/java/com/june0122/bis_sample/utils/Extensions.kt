@@ -17,6 +17,8 @@ fun Int.px(): Int = (this / Resources.getSystem().displayMetrics.density).toInt(
 
 fun Int.dp(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
 
+fun Int.sp() = this * Resources.getSystem().displayMetrics.scaledDensity
+
 fun convertPixelsToDp(context: Context, px: Int): Int {
     return (px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).roundToInt()
 }
@@ -58,7 +60,8 @@ fun formatArrivalTime(string: String): ArrayList<String> {
 
         val minute = string.substring(0, minuteIndex)
         val second = string.substring(minuteIndex + 1, secondIndex)
-        val arrivalCount = string.substring(leftBracketIndex + 1, rightBracketIndex).replace(" ", "")
+        val arrivalCount =
+            string.substring(leftBracketIndex + 1, rightBracketIndex).replace(" ", "")
 
         arrayListOf(minute, second, arrivalCount)
 
@@ -70,7 +73,8 @@ fun formatArrivalTime(string: String): ArrayList<String> {
 
         val minute = string.substring(0, minuteIndex)
         val second = "0"
-        val arrivalCount = string.substring(leftBracketIndex + 1, rightBracketIndex).replace(" ", "")
+        val arrivalCount =
+            string.substring(leftBracketIndex + 1, rightBracketIndex).replace(" ", "")
 
         arrayListOf(minute, second, arrivalCount)
 
@@ -83,7 +87,6 @@ fun setStrictMode() {
     val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
     StrictMode.setThreadPolicy(policy)
 }
-
 
 fun checkBusType(busTypeNumber: String?): String {
     return when (busTypeNumber) {
@@ -99,4 +102,8 @@ fun checkBusType(busTypeNumber: String?): String {
         "9" -> "폐지"
         else -> "미정"
     }
+}
+
+fun String.fourDigitsNumber(): String {
+    return this.substring(this.length - 4, this.length)
 }

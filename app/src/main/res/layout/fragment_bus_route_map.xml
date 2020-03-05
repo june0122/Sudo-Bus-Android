@@ -80,7 +80,8 @@
         android:elevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map">
 
         <TextView
             android:id="@+id/firstStationNameTextView"
@@ -89,8 +90,8 @@
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:maxWidth="170dp"
-            android:singleLine="true"
             android:maxLines="1"
+            android:singleLine="true"
             android:text="구산동"
             android:textColor="@android:color/black"
             android:textSize="16sp"
@@ -103,11 +104,11 @@
             android:id="@+id/lastStationNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="170dp"
             android:layout_marginStart="8dp"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxWidth="170dp"
             android:maxLines="1"
+            android:singleLine="true"
             android:text="상도동"
             android:textColor="@android:color/black"
             android:textSize="16sp"

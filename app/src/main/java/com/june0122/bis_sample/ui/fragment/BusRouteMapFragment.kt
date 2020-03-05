@@ -98,9 +98,7 @@ class BusRouteMapFragment : Fragment(), OnMapReadyCallback {
                     mapLocationLayout.visibility = View.INVISIBLE
                 }
             }
-
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

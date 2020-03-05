@@ -153,7 +153,7 @@ class PreviewBusFragment : Fragment() {
                             lastBusYn = parser.text
                         }
                         routeTypeTag -> {
-                            routeType = checkBusType(parser.text)
+                            routeType = parser.text.checkRouteType()
                         }
                         stStationNmTag -> {
                             stStationNm = parser.text
@@ -197,7 +197,7 @@ class PreviewBusFragment : Fragment() {
         busData.forEach {
             Log.d(
                     "XXX",
-                    "[${it.busNumber}번 버스] (${it.busId}), [버스 종류] : ${checkBusType(it.busType)}, [배차 간격] : ${it.term}분, [기점] : ${it.startStationName} ~ [종점] : ${it.endStationName}, [첫차] : ${it.firstTime} ~ [막차] : ${it.lastTime}, [막차 운행 여부] : ${it.lastBusPresence}"
+                    "[${it.busNumber}번 버스] (${it.busId}), [노선 종류] : ${it.busType.checkRouteType()}, [배차 간격] : ${it.term}분, [기점] : ${it.startStationName} ~ [종점] : ${it.endStationName}, [첫차] : ${it.firstTime} ~ [막차] : ${it.lastTime}, [막차 운행 여부] : ${it.lastBusPresence}"
             )
         }
     }

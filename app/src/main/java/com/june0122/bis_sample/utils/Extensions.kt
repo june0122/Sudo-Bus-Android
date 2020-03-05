@@ -88,8 +88,8 @@ fun setStrictMode() {
     StrictMode.setThreadPolicy(policy)
 }
 
-fun checkBusType(busTypeNumber: String?): String {
-    return when (busTypeNumber) {
+fun String.checkRouteType(): String {
+    return when (this) {
         "0" -> "공용"
         "1" -> "공항"
         "2" -> "마을"
@@ -101,6 +101,25 @@ fun checkBusType(busTypeNumber: String?): String {
         "8" -> "경기"
         "9" -> "폐지"
         else -> "미정"
+    }
+}
+
+fun String.checkBusType(): String {
+    return when (this) {
+        "0" -> "일반"
+        "1" -> "저상"
+        "2" -> "굴절"
+        else -> ""
+    }
+}
+
+fun String.checkCongestion(): String {
+    return when (this) {
+        "3" -> "여유"
+        "4" -> "보통"
+        "5" -> "혼잡"
+        "6" -> "매우혼잡"
+        else -> "여유"
     }
 }
 

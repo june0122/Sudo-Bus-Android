@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.RouteData
-import com.june0122.bis_sample.utils.checkBusType
+import com.june0122.bis_sample.utils.checkRouteType
 import kotlinx.android.synthetic.main.fragment_bus_route_info.*
 import kotlinx.android.synthetic.main.fragment_bus_route_info.busRouteNameTextView
-import kotlinx.android.synthetic.main.fragment_bus_route_map.*
 
 class BusRouteInfoFragment : Fragment() {
     private var routeData : RouteData? = null
@@ -35,7 +34,7 @@ class BusRouteInfoFragment : Fragment() {
         }
 
         busRouteNameTextView.text = routeData?.busRouteName
-        busTypeTextView.text = resources.getString(R.string.bus_type, checkBusType(routeData?.routeType))
+        busTypeTextView.text = resources.getString(R.string.bus_type, routeData?.routeType?.checkRouteType())
         startStationTextView.text = routeData?.startStationName
         endStationTextView.text = routeData?.endStationName
         busScheduleDataTextView.text = resources.getString(R.string.bus_schedule, routeData?.firstTime, routeData?.lastTime)

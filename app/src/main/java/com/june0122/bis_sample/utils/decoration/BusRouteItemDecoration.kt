@@ -1,34 +1,28 @@
 package com.june0122.bis_sample.utils.decoration
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.BusLocationData
-import com.june0122.bis_sample.utils.dp
-import com.june0122.bis_sample.utils.fourDigitsNumber
-import com.june0122.bis_sample.utils.sp
-import kotlinx.android.synthetic.main.item_bus_route_station.view.*
+import com.june0122.bis_sample.utils.*
+import kotlinx.android.synthetic.main.item_bus_location.view.*
+import kotlinx.android.synthetic.main.item_bus_route_station.view.bottomDivider
+import kotlinx.android.synthetic.main.item_bus_route_station.view.topDivider
 
 class BusRouteItemDecoration(
         val context: Context?,
         private val count: Int,
-        private val snapHelper: LinearSnapHelper,
         private val busLocationData: ArrayList<BusLocationData>
 ) : RecyclerView.ItemDecoration() {
 
-    private val busToken = context?.let { ContextCompat.getDrawable(it, R.drawable.ic_bus_token) }
-    private val busTag = context?.let { ContextCompat.getDrawable(it, R.drawable.ic_bus_info) }
+    private var busLocationItem: Bitmap? = null
 
     override fun getItemOffsets(
             outRect: Rect,
@@ -41,7 +35,6 @@ class BusRouteItemDecoration(
         val itemPosition = parent.getChildAdapterPosition(view)
 
         val itemCount = state.itemCount
-
 
         with(outRect) {
             when (itemPosition) {
@@ -69,70 +62,56 @@ class BusRouteItemDecoration(
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
 
-
         val layoutManager = parent.layoutManager as LinearLayoutManager
 
         busLocationData.forEach { data ->
             val child = layoutManager.findViewByPosition(data.sectionOrder.toInt() - 1)
 
-
             child?.let {
                 val sectionLineLength = 60.dp()
-                val sectionProcess =
-                        data.sectionDistance.toFloat() / data.fullSectionDistance.toFloat()
+                val sectionProcess = data.sectionDistance.toFloat() / data.fullSectionDistance.toFloat()
                 val sectionProcessedLength = (sectionLineLength * sectionProcess).toInt()
 
-                val busTokenSize = 16.dp()
-                val horizontalCenter =
-                        (child.busDirectionImageView.left + child.busDirectionImageView.right) / 2
-                val verticalCenter =
-                        child.top + (child.busDirectionImageView.top + child.busDirectionImageView.bottom) / 2
+                initBusLocationItem(parent, data)
 
-                busToken?.apply {
-                    setBounds(
-                            horizontalCenter - (busTokenSize / 2),
-                            verticalCenter - (busTokenSize / 2) + sectionProcessedLength,
-                            horizontalCenter + (busTokenSize / 2),
-                            verticalCenter + (busTokenSize / 2) + sectionProcessedLength
-                    )
-                    draw(c)
+                busLocationItem?.let { item ->
+                    c.drawBitmap(item, 0.toFloat(), (child.top + sectionProcessedLength).toFloat(), Paint())
                 }
-
-                val tagWidth = 60.dp()
-                val tagHeight = 50.dp()
-                val tagOffset = 40.dp()
-
-                busTag?.apply {
-                    setBounds(
-                            horizontalCenter - tagOffset - (tagWidth / 2),
-                            verticalCenter - (tagHeight / 2) + sectionProcessedLength,
-                            horizontalCenter - tagOffset + (tagWidth / 2),
-                            verticalCenter + (tagHeight / 2) + sectionProcessedLength
-                    )
-                    draw(c)
-                }
-
-                val grayPaint = Paint().apply {
-                    isAntiAlias = true
-                    textAlign = Paint.Align.CENTER
-                    textSize = 10.sp()
-                    color = child.context.getColor(R.color.dove_gray)
-                }
-
-                val orangePaint = Paint().apply {
-                    isAntiAlias = true
-                    textAlign = Paint.Align.CENTER
-                    textSize = 10.sp()
-                    color = child.context.getColor(R.color.orange)
-                }
-
-                c.drawText(data.plainBusNumber.fourDigitsNumber(), (horizontalCenter - tagOffset).toFloat(), (verticalCenter + sectionProcessedLength).toFloat(), grayPaint)
-
-                c.drawText(data.plainBusNumber.fourDigitsNumber(), (horizontalCenter - tagOffset).toFloat(), (verticalCenter + sectionProcessedLength).toFloat(), grayPaint)
-
-
             }
         }
+    }
+
+    private fun initBusLocationItem(parent: RecyclerView, data: BusLocationData) {
+        val view = LayoutInflater.from(context).inflate(R.layout.item_bus_location, parent, false)
+        val bitmap = Bitmap.createBitmap(parent.width, parent.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(parent.width, View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(60.dp(), View.MeasureSpec.EXACTLY)
+
+        view.plainBusNumberTextView?.text = data.plainBusNumber.fourDigitsNumber()
+        view.congestionTextView?.text = data.busCongestion.checkCongestion()
+        view.busTypeTextView?.text = data.type.checkBusType()
+
+//        when (data.type.checkBusType()) {
+//            "일반" -> {
+//                view.busTagImageView.layoutParams.height = 18.dp()
+//            }
+//            else -> {
+//                view.busTagImageView.layoutParams.height = 32.dp()
+//            }
+//        }
+
+        view?.measure(widthSpec, heightSpec)
+        view?.layout(parent.left, parent.top, parent.width, parent.height)
+        view?.draw(canvas)
+        busLocationItem = bitmap
+    }
+
+    private fun getTextWidth(text: String, paint: Paint): Int {
+        val bounds = Rect()
+        paint.getTextBounds(text, 0, text.length, bounds)
+
+        return bounds.left + bounds.width()
     }
 
 }

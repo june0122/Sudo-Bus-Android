@@ -9,7 +9,6 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import com.google.android.material.appbar.AppBarLayout
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.BusLocationData
@@ -17,15 +16,10 @@ import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RouteData
 import com.june0122.bis_sample.model.StationList
 import com.june0122.bis_sample.ui.adapter.BusRouteAdapter
-import com.june0122.bis_sample.utils.RecyclerItemClickListener
-import com.june0122.bis_sample.utils.checkBusType
-import com.june0122.bis_sample.utils.createParser
+import com.june0122.bis_sample.utils.*
 import com.june0122.bis_sample.utils.decoration.BusRouteItemDecoration
-import com.june0122.bis_sample.utils.formatTime
 import kotlinx.android.synthetic.main.fragment_bus_route.*
 import kotlinx.android.synthetic.main.fragment_bus_route.refreshFAB
-import kotlinx.android.synthetic.main.fragment_bus_route.view.*
-import kotlinx.android.synthetic.main.fragment_station_bus_list.*
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.*
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.appbarMapButton
 import kotlinx.android.synthetic.main.layout_appbar_bus_route.backButtonImageView
@@ -59,9 +53,6 @@ class BusRouteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val snapHelper = LinearSnapHelper()
-        snapHelper.attachToRecyclerView(view.busRouteRecyclerView)
-
         val busRouteLayoutManager = LinearLayoutManager(context)
         busRouteRecyclerView.layoutManager = busRouteLayoutManager
         busRouteLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -73,7 +64,6 @@ class BusRouteFragment : Fragment() {
                 BusRouteItemDecoration(
                         context,
                         busRouteAdapter.itemCount,
-                        snapHelper,
                         busLocationData
                 )
         )
@@ -617,7 +607,7 @@ class BusRouteFragment : Fragment() {
 
         Log.d("XXX", "$stStationNm ~ $edStationNm")
 
-        busTypeTextView.text = resources.getString(R.string.bus_type, checkBusType(routeType))
+        busTypeTextView.text = resources.getString(R.string.bus_type, routeType.checkRouteType())
         busNumberTextView.text = busRouteNm
         toolbarBusNumberTextView.text = busRouteNm
         firstStationNameTextView.text = stStationNm

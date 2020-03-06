@@ -42,7 +42,7 @@ class PreviewBusFragment : Fragment() {
         activity?.runOnUiThread {
             busData.clear()
             when (inputData) {
-                "" -> busData.clear()
+                "" -> previewBusAdapter.items.clear()
                 else -> searchBusRouteId(inputData)
             }
         }

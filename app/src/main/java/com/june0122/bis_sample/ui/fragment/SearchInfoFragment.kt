@@ -18,6 +18,7 @@ import com.june0122.bis_sample.utils.dp
 import com.june0122.bis_sample.utils.setStrictMode
 import com.june0122.bis_sample.utils.textColor
 import kotlinx.android.synthetic.main.fragment_search.*
+import java.util.*
 
 fun EditText.setAttributes(hint: String, inputType: Int) {
     this.hint = hint
@@ -28,6 +29,7 @@ class SearchInfoFragment : Fragment() {
     val previewBusFragment = PreviewBusFragment()
     val previewStationFragment = PreviewStationFragment()
 
+    var timer: Timer? = null
     var inputData = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -62,8 +64,6 @@ class SearchInfoFragment : Fragment() {
                             textTypeKeyboardButton.isSelected = false
                             searchEditText
                                     .setAttributes(getString(R.string.search_tab_hint_1), InputType.TYPE_CLASS_NUMBER)
-
-
                             numberTypeKeyboardButton.textColor(view, R.color.white)
                             textTypeKeyboardButton.textColor(view, R.color.gray_alpha_20)
                         }
@@ -119,36 +119,47 @@ class SearchInfoFragment : Fragment() {
 
         setStrictMode()
 
-        activity?.runOnUiThread {
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
-            searchEditText.addTextChangedListener(object : TextWatcher {
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                timer?.let { timer?.cancel() }
 
-                    inputData = searchEditText.text.toString()
+                timer = Timer()
 
-                    when (searchTypeTabs.selectedTabPosition) {
-                        0 -> {
-                            previewBusFragment.inputBusNumber(inputData)
-                            viewPagerAdapter.updateBusFragment(previewBusFragment)
+                timer?.schedule(object : TimerTask() {
+                    override fun run() {
+
+                        inputData = searchEditText.text.toString()
+
+                        when (searchTypeTabs.selectedTabPosition) {
+                            0 -> {
+                                previewBusFragment.inputBusNumber(inputData)
+                                viewPagerAdapter.updateBusFragment(previewBusFragment)
+                            }
+                            1 -> {
+                                previewStationFragment.inputStationArsId(inputData)
+                                viewPagerAdapter.updateStationFragment(previewStationFragment)
+                            }
                         }
-                        1 -> {
-                            previewStationFragment.inputStationArsId(inputData)
-                            viewPagerAdapter.updateStationFragment(previewStationFragment)
+
+                        activity?.runOnUiThread {
+                            if(s.toString().isEmpty()) {
+                                Log.d("XXXXX", "Empty")
+                                inputData = ""
+                            }
+                            viewPagerAdapter.notifyDataSetChanged()
                         }
                     }
+                }, 600)
+            }
 
-                    viewPagerAdapter.notifyDataSetChanged()
+            override fun afterTextChanged(s: Editable?) {
 
-                }
+            }
 
-                override fun afterTextChanged(s: Editable?) {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+        })
 
-                }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-                }
-            })
-        }
     }
 }

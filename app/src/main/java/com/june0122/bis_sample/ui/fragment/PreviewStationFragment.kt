@@ -50,7 +50,7 @@ class PreviewStationFragment : Fragment() {
         activity?.runOnUiThread {
             stationPreviewDataList.clear()
             when (inputData) {
-                "" -> stationPreviewDataList.clear()
+                "" -> previewStationAdapter.items.clear()
                 else -> searchStationId(inputData)
             }
         }

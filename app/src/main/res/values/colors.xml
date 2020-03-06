@@ -5,6 +5,7 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="white">#ffffff</color>
+    <color name="white_gray">#F4F4F4</color>
     <color name="gray_alpha_69">#B0F3F3F3</color>
     <color name="gray_alpha_20">#33CDCDCD</color>
     <color name="gray">#cdcdcd</color>
@@ -17,6 +18,9 @@
 
     <color name="transparent">#00000000</color>
 
+    <color name="green">#0DBC15</color>
     <color name="yellow">#FDCB35</color>
+    <color name="golden_grass">#E18F28</color>
     <color name="orange">#F4511E</color>
+    <color name="red">#D81B1B</color>
 </resources>

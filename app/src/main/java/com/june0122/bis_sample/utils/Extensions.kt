@@ -33,6 +33,10 @@ fun Button.textColor(view: View, color: Int) {
     this.setTextColor(ContextCompat.getColor(view.context, color))
 }
 
+fun View.backgroundColor(context: Context, color: Int) {
+    this.setBackgroundColor(ContextCompat.getColor(context, color))
+}
+
 fun createParser(url: URL): ParserElement {
     val inputStream = url.openStream()
     val factory: XmlPullParserFactory = XmlPullParserFactory.newInstance()

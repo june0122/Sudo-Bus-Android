@@ -81,10 +81,7 @@ class BusRouteFragment : Fragment() {
         }
 
         backButtonImageView.setOnClickListener {
-            activity?.supportFragmentManager
-                    ?.beginTransaction()
-                    ?.replace(R.id.fragmentContainer, SearchInfoFragment())
-                    ?.addToBackStack(null)?.commit()
+            activity?.onBackPressed()
         }
 
         toolbarHomeButton.setOnClickListener {
@@ -417,16 +414,19 @@ class BusRouteFragment : Fragment() {
                             trnstnid = parser.text
 
                             val data = StationList(
+                                    seq,
                                     busRouteId,
                                     busRouteNm,
                                     stationNm,
                                     arsId,
+                                    station,
                                     sectSpd,
                                     beginTm,
                                     lastTm,
                                     routeType,
                                     gpsX,
-                                    gpsY
+                                    gpsY,
+                                    trnstnid
                             )
                             stationList.add(data)
                         }
@@ -462,12 +462,6 @@ class BusRouteFragment : Fragment() {
         busRouteAdapter.notifyDataSetChanged()
 
         stationList.forEach {
-//            Log.d("XXX", "${it.stationName} ${it.stationArsId} | ${it.firstTime} ~ ${it.lastTime}")
-//            Log.d(
-//                    "XXX",
-//                    "$direction $gpsX $gpsY $lastTm $posX $posY $routeType $sectSpd $section $seq $station $stationNo $transYn $fullSectDist $trnstnid"
-//            )
-
             Log.d("SectSpd", "[${it.stationName} 구간 속도] ${it.sectionSpeed}")
         }
 
@@ -876,9 +870,12 @@ class BusRouteFragment : Fragment() {
         busRouteAdapter.notifyDataSetChanged()
 
         busLocationData.forEach {
-            Log.d("BUSLOCATIONDATA", "[구간 순번] ${it.sectionOrder}, [버스 번호] ${it.plainBusNumber} , [혼잡도] ${it.busCongestion}," +
-                    "[타입] ${it.type}, [정류소 간 거리] ${it.fullSectionDistance}, [정류장 구간 이동거리] ${it.sectionDistance} " +
-                    "[정류소 도착 여부] ${it.stationArrivalFlag}, [회차지 정류소 ID] ${it.turningStationId}")
+            Log.d(
+                    "BUSLOCATIONDATA",
+                    "[구간 순번] ${it.sectionOrder}, [버스 번호] ${it.plainBusNumber} , [혼잡도] ${it.busCongestion}," +
+                            "[타입] ${it.type}, [정류소 간 거리] ${it.fullSectionDistance}, [정류장 구간 이동거리] ${it.sectionDistance} " +
+                            "[정류소 도착 여부] ${it.stationArrivalFlag}, [회차지 정류소 ID] ${it.turningStationId}"
+            )
         }
     }
 }

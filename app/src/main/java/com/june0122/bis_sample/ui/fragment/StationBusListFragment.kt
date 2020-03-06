@@ -67,10 +67,7 @@ class StationBusListFragment : Fragment() {
         }
 
         backButtonImageView.setOnClickListener {
-            activity?.supportFragmentManager
-                    ?.beginTransaction()
-                    ?.replace(R.id.fragmentContainer, SearchInfoFragment())
-                    ?.addToBackStack(null)?.commit()
+            activity?.onBackPressed()
         }
 
         toolbarHomeButton.setOnClickListener {

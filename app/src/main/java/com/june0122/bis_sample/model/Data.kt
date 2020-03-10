@@ -61,6 +61,12 @@ data class BusData(
         val lastBusPresence: String
 )
 
+data class RouteService(
+        val routeName: String,
+        val routeId: String,
+        val routeType: String
+)
+
 data class BusLocationData(
         val sectionOrder: String,
         val sectionDistance: String,
@@ -86,9 +92,7 @@ data class StationPreviewData(
         val stationArsId: String,
         val stationId: String,
         val wgs84X: String,
-        val wgs84Y: String,
-        val grs80X: String,
-        val grs80Y: String
+        val wgs84Y: String
 )
 
 class Data {

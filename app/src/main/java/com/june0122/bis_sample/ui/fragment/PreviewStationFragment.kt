@@ -22,7 +22,8 @@ import java.net.URL
 
 class PreviewStationFragment : Fragment() {
     private var inputData: String = ""
-    private val stationPreviewDataList = arrayListOf<StationPreviewData>()
+    private val seoulStationPreviewDataList = arrayListOf<StationPreviewData>()
+    private val gyeonggiStationPreviewDataList = arrayListOf<StationPreviewData>()
     private val previewStationAdapter = PreviewStationAdapter()
 
     fun inputStationArsId(stationArsId: String) {
@@ -45,13 +46,15 @@ class PreviewStationFragment : Fragment() {
         previewStationListLayoutManager.orientation = LinearLayoutManager.VERTICAL
         previewStationRecyclerView.adapter = previewStationAdapter
 
-//        Log.d("TEST-S2", "${searchDirection("14226")}")
-
         activity?.runOnUiThread {
-            stationPreviewDataList.clear()
+            seoulStationPreviewDataList.clear()
+            gyeonggiStationPreviewDataList.clear()
             when (inputData) {
                 "" -> previewStationAdapter.items.clear()
-                else -> searchStationId(inputData)
+                else -> {
+                    searchStationId(inputData)
+                    searchGyeonggiStationId(inputData)
+                }
             }
         }
 
@@ -62,7 +65,7 @@ class PreviewStationFragment : Fragment() {
                         object : RecyclerItemClickListener.OnItemClickListener {
                             override fun onItemClick(view: View, position: Int) {
 
-                                if (stationPreviewDataList[position].stationArsId == "0") {
+                                if (seoulStationPreviewDataList[position].stationArsId == "0") {
                                     Toast.makeText(context, "해당 정류소의 정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                                     return
                                 }
@@ -178,8 +181,13 @@ class PreviewStationFragment : Fragment() {
                         tmYTag -> {
                             tmY = parser.text
 
-                            val data = StationPreviewData(stNm, arsId, stId, tmX, tmY, posX, posY)
-                            stationPreviewDataList.add(data)
+                            val data = StationPreviewData(stNm, arsId, stId, tmX, tmY)
+
+                            when (data.stationArsId) {
+                                "0" -> seoulStationPreviewDataList.remove(data)
+                                else -> seoulStationPreviewDataList.add(data)
+                            }
+
                         }
                     }
 
@@ -195,14 +203,142 @@ class PreviewStationFragment : Fragment() {
             parserEvent = parser.next()
         }
 
-        previewStationAdapter.items.clear()
-        previewStationAdapter.items.addAll(stationPreviewDataList)
+//        previewStationAdapter.items.clear()
+        previewStationAdapter.items.addAll(seoulStationPreviewDataList)
         previewStationAdapter.notifyDataSetChanged()
 
-        stationPreviewDataList.forEach {
+        seoulStationPreviewDataList.forEach {
             Log.d(
                     "XXX",
-                    "[정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}"
+                    "[서울] - [정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}"
+            )
+        }
+    }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    private fun searchGyeonggiStationId(busStationName: String) {
+        val url = URL(
+                "http://openapi.gbis.go.kr/ws/rest/busstationservice?serviceKey=$SERVICE_KEY&keyword=$busStationName"
+        )
+
+        val parser = createParser(url).parser
+        var parserEvent = createParser(url).parserEvent
+
+        var centerYnTag = false
+        var districtCdTag = false
+        var mobileNoTag = false
+        var regionNameTag = false
+        var stationIdTag = false
+        var stationNameTag = false
+        var xTag = false
+        var yTag = false
+
+        var centerYn = ""
+        var districtCd = ""
+        var mobileNo = ""
+        var regionName = ""
+        var stationId = ""
+        var stationName = ""
+        var x = ""
+        var y = ""
+
+        while (parserEvent != XmlPullParser.END_DOCUMENT) {
+            when (parserEvent) {
+                XmlPullParser.START_TAG -> {
+                    when (parser.name) {
+                        "centerYn" -> {
+                            centerYnTag = true
+                        }
+
+                        "districtCd" -> {
+                            districtCdTag = true
+                        }
+
+                        "mobileNo" -> {
+                            mobileNoTag = true
+                        }
+
+                        "regionName" -> {
+                            regionNameTag = true
+                        }
+
+                        "stationId" -> {
+                            stationIdTag = true
+                        }
+
+                        "stationName" -> {
+                            stationNameTag = true
+                        }
+
+                        "x" -> {
+                            xTag = true
+                        }
+
+                        "y" -> {
+                            yTag = true
+                        }
+                    }
+                }
+
+                XmlPullParser.TEXT -> {
+                    when {
+                        centerYnTag -> {
+                            centerYn = parser.text
+                        }
+
+                        districtCdTag -> {
+                            districtCd = parser.text
+                        }
+
+                        mobileNoTag -> {
+                            mobileNo = parser.text
+                        }
+
+                        regionNameTag -> {
+                            regionName = parser.text
+                        }
+
+                        stationIdTag -> {
+                            stationId = parser.text
+                        }
+
+                        stationNameTag -> {
+                            stationName = parser.text
+                        }
+
+                        xTag -> {
+                            x = parser.text
+                        }
+
+                        yTag -> {
+                            y = parser.text
+
+                            val data = StationPreviewData(stationName, mobileNo, stationId, x, y)
+                            gyeonggiStationPreviewDataList.add(data)
+                        }
+                    }
+
+                    centerYnTag = false
+                    districtCdTag = false
+                    mobileNoTag = false
+                    regionNameTag = false
+                    stationIdTag = false
+                    stationNameTag = false
+                    xTag = false
+                    yTag = false
+                }
+            }
+            parserEvent = parser.next()
+        }
+
+//        previewStationAdapter.items.clear()
+        previewStationAdapter.items.addAll(gyeonggiStationPreviewDataList)
+        previewStationAdapter.notifyDataSetChanged()
+
+        gyeonggiStationPreviewDataList.forEach {
+            Log.d(
+                    "XXX",
+                    "[경기] - [정류소 이름] ${it.stationName}, [정류소 고유번호] ${it.stationArsId}, [정류소 ID] ${it.stationId}"
             )
         }
     }

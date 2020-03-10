@@ -90,7 +90,7 @@ class BusRouteItemDecoration(
 
         view.plainBusNumberTextView?.text = data.plainBusNumber.fourDigitsNumber()
         view.congestionTextView?.text = data.busCongestion.checkCongestion()
-        view.busTypeTextView?.text = data.type.checkBusType()
+        view.routeTypeTextView?.text = data.type.checkBusType()
 
 //        when (data.type.checkBusType()) {
 //            "일반" -> {

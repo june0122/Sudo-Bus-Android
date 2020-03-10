@@ -601,7 +601,7 @@ class BusRouteFragment : Fragment() {
 
         Log.d("XXX", "$stStationNm ~ $edStationNm")
 
-        busTypeTextView.text = resources.getString(R.string.bus_type, routeType.checkRouteType())
+        routeTypeTextView.text = resources.getString(R.string.bus_type, routeType.checkRouteType())
         busNumberTextView.text = busRouteNm
         toolbarBusNumberTextView.text = busRouteNm
         firstStationNameTextView.text = stStationNm

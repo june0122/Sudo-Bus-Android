@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.june0122.bis_sample.R
-import com.june0122.bis_sample.model.BusData
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
+import com.june0122.bis_sample.model.RouteService
 import com.june0122.bis_sample.ui.adapter.PreviewBusAdapter
 import com.june0122.bis_sample.utils.*
 import kotlinx.android.synthetic.main.fragment_preview_bus.*
@@ -20,7 +20,8 @@ import java.net.URL
 
 class PreviewBusFragment : Fragment() {
     private var inputData: String = ""
-    private val busData = arrayListOf<BusData>()
+    private val seoulBusData = arrayListOf<RouteService>()
+    private val gyeonggiBusData = arrayListOf<RouteService>()
     private val previewBusAdapter = PreviewBusAdapter()
 
     fun inputBusNumber(busNumber: String) {
@@ -40,10 +41,14 @@ class PreviewBusFragment : Fragment() {
         previewBusRecyclerView.adapter = previewBusAdapter
 
         activity?.runOnUiThread {
-            busData.clear()
+            seoulBusData.clear()
+            gyeonggiBusData.clear()
             when (inputData) {
                 "" -> previewBusAdapter.items.clear()
-                else -> searchBusRouteId(inputData)
+                else -> {
+                    searchBusRouteId(inputData)
+                    searchGyeonggiBusRouteId(inputData)
+                }
             }
         }
 
@@ -53,7 +58,7 @@ class PreviewBusFragment : Fragment() {
 
                         val busRouteFragment = BusRouteFragment()
 
-                        busRouteFragment.inputBusNumber(previewBusAdapter.items[position].busNumber)
+                        busRouteFragment.inputBusNumber(previewBusAdapter.items[position].routeName)
 
                         activity?.supportFragmentManager
                                 ?.beginTransaction()
@@ -63,7 +68,6 @@ class PreviewBusFragment : Fragment() {
                 })
         )
     }
-
 
     @Throws(XmlPullParserException::class, IOException::class)
     private fun searchBusRouteId(busNumber: String) {
@@ -161,18 +165,17 @@ class PreviewBusFragment : Fragment() {
                         termTag -> {
                             term = parser.text
 
-                            val data = BusData(
+                            val data = RouteService(
                                     busRouteNm,
                                     busRouteId,
-                                    routeType,
-                                    term,
-                                    stStationNm,
-                                    edStationNm,
-                                    firstBusTm,
-                                    lastBusTm,
-                                    lastBusYn
+                                    routeType
                             )
-                            busData.add(data)
+
+                            when (data.routeType) {
+                                "인천" -> seoulBusData.remove(data)
+                                "경기" -> seoulBusData.remove(data)
+                                else -> seoulBusData.add(data)
+                            }
                         }
                     }
 
@@ -190,14 +193,116 @@ class PreviewBusFragment : Fragment() {
             parserEvent = parser.next()
         }
 
-        previewBusAdapter.items.clear()
-        previewBusAdapter.items.addAll(busData)
+//        previewBusAdapter.items.clear()
+        previewBusAdapter.items.addAll(seoulBusData)
         previewBusAdapter.notifyDataSetChanged()
 
-        busData.forEach {
+        seoulBusData.forEach {
             Log.d(
                     "XXX",
-                    "[${it.busNumber}번 버스] (${it.busId}), [노선 종류] : ${it.busType.checkRouteType()}, [배차 간격] : ${it.term}분, [기점] : ${it.startStationName} ~ [종점] : ${it.endStationName}, [첫차] : ${it.firstTime} ~ [막차] : ${it.lastTime}, [막차 운행 여부] : ${it.lastBusPresence}"
+                    "[서울] ${it.routeName}번 버스 | [노선 ID] : ${it.routeId}, [노선 종류] : ${it.routeType}"
+            )
+        }
+
+    }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    private fun searchGyeonggiBusRouteId(busNumber: String) {
+        val url = URL("http://openapi.gbis.go.kr/ws/rest/busrouteservice?serviceKey=$SERVICE_KEY&keyword=$busNumber")
+
+        val parser = createParser(url).parser
+        var parserEvent = createParser(url).parserEvent
+
+        var districtCdTag = false
+        var regionNameTag = false
+        var routeIdTag = false
+        var routeNameTag = false
+        var routeTypeCdTag = false
+        var routeTypeNameTag = false
+
+        var districtCd = ""
+        var regionName = ""
+        var routeId = ""
+        var routeName = ""
+        var routeTypeCd = ""
+        var routeTypeName = ""
+
+        while (parserEvent != XmlPullParser.END_DOCUMENT) {
+            when (parserEvent) {
+                XmlPullParser.START_DOCUMENT -> {
+                }
+
+                XmlPullParser.START_TAG -> {
+                    when (parser.name) {
+                        "districtCd" -> {
+                            districtCdTag = true
+                        }
+                        "regionName" -> {
+                            regionNameTag = true
+                        }
+                        "routeId" -> {
+                            routeIdTag = true
+                        }
+                        "routeName" -> {
+                            routeNameTag = true
+                        }
+                        "routeTypeCd" -> {
+                            routeTypeCdTag = true
+                        }
+                        "routeTypeName" -> {
+                            routeTypeNameTag = true
+                        }
+                    }
+                }
+
+                XmlPullParser.TEXT -> {
+                    when {
+//                        districtCdTag -> {
+//                            districtCd = parser.text
+//                        }
+//                        regionNameTag -> {
+//                            regionName = parser.text
+//                        }
+                        routeIdTag -> {
+                            routeId = parser.text
+                        }
+                        routeNameTag -> {
+                            routeName = parser.text
+                        }
+                        routeTypeCdTag -> {
+                            routeTypeCd = parser.text.checkRouteType()
+                        }
+                        routeTypeNameTag -> {
+                            routeTypeName = parser.text
+
+                            val data = RouteService(
+                                    routeName,
+                                    routeId,
+                                    routeTypeCd
+                            )
+
+                            gyeonggiBusData.add(data)
+                        }
+                    }
+                    districtCdTag = false
+                    regionNameTag = false
+                    routeIdTag = false
+                    routeNameTag = false
+                    routeTypeCdTag = false
+                    routeTypeNameTag = false
+                }
+            }
+            parserEvent = parser.next()
+        }
+
+//        previewBusAdapter.items.clear()
+        previewBusAdapter.items.addAll(gyeonggiBusData)
+        previewBusAdapter.notifyDataSetChanged()
+
+        gyeonggiBusData.forEach {
+            Log.d(
+                    "XXX",
+                    "[경기] ${it.routeName}번 버스 | [노선 ID] : ${it.routeId}, [노선 종류] : ${it.routeType}"
             )
         }
     }

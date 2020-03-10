@@ -263,4 +263,103 @@ class StationBusListFragment : Fragment() {
         toolbarStationNameTextView?.text = busList[0].stationName
         stationDirectionTextView?.text = resources.getString(R.string.direction_station, busList[0].nextStation)
     }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    private fun searchGyeonggiBusListAtStation(stationId: String) {
+        val url = URL("http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?ServiceKey=${SERVICE_KEY}&arsId=$stationId")
+
+        val parser = createParser(url).parser
+        var parserEvent = createParser(url).parserEvent
+
+        var arrmsg1Tag = false
+        var arrmsg2Tag = false
+        var arsIdTag = false
+        var nxtStnTag = false
+        var rtNmTag = false
+        var stNmTag = false
+
+        var arrmsg1 = ""
+        var arrmsg2 = ""
+        var arsId = ""
+        var nxtStn = ""
+        var rtNm = ""
+        var stNm: String
+
+        while (parserEvent != XmlPullParser.END_DOCUMENT) {
+            when (parserEvent) {
+                XmlPullParser.START_TAG -> {
+                    when (parser.name) {
+                        "arrmsg1" -> {
+                            arrmsg1Tag = true
+                        }
+                        "arrmsg2" -> {
+                            arrmsg2Tag = true
+                        }
+                        "arsId" -> {
+                            arsIdTag = true
+                        }
+                        "nxtStn" -> {
+                            nxtStnTag = true
+                        }
+                        "rtNm" -> {
+                            rtNmTag = true
+                        }
+                        "stNm" -> {
+                            stNmTag = true
+                        }
+                    }
+                }
+
+                XmlPullParser.TEXT -> {
+                    when {
+                        arrmsg1Tag -> {
+                            arrmsg1 = parser.text
+                        }
+                        arrmsg2Tag -> {
+                            arrmsg2 = parser.text
+                        }
+                        arsIdTag -> {
+                            arsId = parser.text
+                        }
+                        nxtStnTag -> {
+                            nxtStn = parser.text
+                        }
+                        rtNmTag -> {
+                            rtNm = parser.text
+                        }
+                        stNmTag -> {
+                            stNm = parser.text
+
+                            val data = BusList(arsId, stNm, rtNm, nxtStn, arrmsg1, arrmsg2)
+                            busList.add(data)
+                        }
+                    }
+
+                    arrmsg1Tag = false
+                    arrmsg2Tag = false
+                    arsIdTag = false
+                    nxtStnTag = false
+                    rtNmTag = false
+                    stNmTag = false
+                }
+            }
+            parserEvent = parser.next()
+        }
+
+        if (busList.isEmpty()) {
+            Log.d("EMPTY", "Empty Info")
+            Toast.makeText(context, "해당 정류소의 정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        stationBusListAdapter.apply {
+            items.clear()
+            items.addAll(busList)
+            notifyDataSetChanged()
+        }
+
+        stationArsIdTextView?.text = busList[0].arsId
+        stationNameTextView?.text = busList[0].stationName
+        toolbarStationNameTextView?.text = busList[0].stationName
+        stationDirectionTextView?.text = resources.getString(R.string.direction_station, busList[0].nextStation)
+    }
 }

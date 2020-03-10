@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.Data
+import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.StationPreviewData
 import com.june0122.bis_sample.ui.viewholder.PreviewStationViewHolder
 import com.june0122.bis_sample.utils.createParser
@@ -34,7 +35,7 @@ class PreviewStationAdapter : RecyclerView.Adapter<PreviewStationViewHolder>() {
     @Throws(XmlPullParserException::class, IOException::class)
     fun searchDirection(stationId: String): String {
         val directionList = arrayListOf<String>()
-        val url = URL("http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?ServiceKey=${Data.SERVICE_KEY}&arsId=$stationId")
+        val url = URL("http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?ServiceKey=$SERVICE_KEY&arsId=$stationId")
 
         val parser = createParser(url).parser
         var parserEvent = createParser(url).parserEvent

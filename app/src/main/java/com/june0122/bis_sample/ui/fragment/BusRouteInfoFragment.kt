@@ -34,7 +34,7 @@ class BusRouteInfoFragment : Fragment() {
         }
 
         busRouteNameTextView.text = routeData?.busRouteName
-        busTypeTextView.text = resources.getString(R.string.bus_type, routeData?.routeType?.checkRouteType())
+        routeTypeTextView.text = resources.getString(R.string.bus_type, routeData?.routeType?.checkRouteType())
         startStationTextView.text = routeData?.startStationName
         endStationTextView.text = routeData?.endStationName
         busScheduleDataTextView.text = resources.getString(R.string.bus_schedule, routeData?.firstTime, routeData?.lastTime)

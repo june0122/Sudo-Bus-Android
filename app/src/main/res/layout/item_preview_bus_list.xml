@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/busNumberPreviewTextView"
+        android:id="@+id/routeNamePreviewTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/busTypeTextView"
+        android:id="@+id/routeTypeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -29,5 +29,5 @@
         android:textColor="@color/dark_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/busNumberPreviewTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/routeNamePreviewTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.BusLocationData
@@ -230,6 +231,7 @@ class BusRouteFragment : Fragment() {
 
         }
     }
+
 
     @Throws(XmlPullParserException::class, IOException::class)
     fun searchBusRoute(routeId: String) {

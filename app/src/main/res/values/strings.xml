@@ -11,4 +11,6 @@
     <string name="station_schedule">%s ~ %s</string>
     <string name="bus_schedule">%s ~ %s</string>
     <string name="bus_type">%s 버스</string>
+
+    <string name="custom_header">Custom Header</string>
 </resources>

@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.june0122.bis_sample.R
 import com.june0122.bis_sample.model.Data.Companion.SERVICE_KEY
 import com.june0122.bis_sample.model.RouteService
 import com.june0122.bis_sample.ui.adapter.PreviewBusAdapter
 import com.june0122.bis_sample.utils.*
+import com.june0122.bis_sample.utils.decoration.StickyHeaderItemDecoration
 import kotlinx.android.synthetic.main.fragment_preview_bus.*
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
@@ -35,10 +37,22 @@ class PreviewBusFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val previewBusListLayoutManager = LinearLayoutManager(context)
-        previewBusRecyclerView.layoutManager = previewBusListLayoutManager
-        previewBusListLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        previewBusRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        val dividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        previewBusRecyclerView.addItemDecoration(dividerItemDecoration)
+
         previewBusRecyclerView.adapter = previewBusAdapter
+
+        val decorator = StickyHeaderItemDecoration(previewBusAdapter, previewBusRecyclerView)
+        decorator.attachToRecyclerView(previewBusRecyclerView)
+
+
+//
+//        val previewBusListLayoutManager = LinearLayoutManager(context)
+//        previewBusRecyclerView.layoutManager = previewBusListLayoutManager
+//        previewBusListLayoutManager.orientation = LinearLayoutManager.VERTICAL
+//        previewBusRecyclerView.adapter = previewBusAdapter
 
         activity?.runOnUiThread {
             seoulBusData.clear()
@@ -46,7 +60,8 @@ class PreviewBusFragment : Fragment() {
             when (inputData) {
                 "" -> previewBusAdapter.items.clear()
                 else -> {
-                    searchBusRouteId(inputData)
+                    previewBusAdapter.items.clear()
+                    searchSeoulBusRouteId(inputData)
                     searchGyeonggiBusRouteId(inputData)
                 }
             }
@@ -55,10 +70,10 @@ class PreviewBusFragment : Fragment() {
         previewBusRecyclerView.addOnItemTouchListener(
                 RecyclerItemClickListener(view.context, previewBusRecyclerView, object : RecyclerItemClickListener.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
-
                         val busRouteFragment = BusRouteFragment()
+                        val routeService = previewBusAdapter.items[position].data() as RouteService
 
-                        busRouteFragment.inputBusNumber(previewBusAdapter.items[position].routeName)
+                        busRouteFragment.inputBusNumber(routeService.routeName)
 
                         activity?.supportFragmentManager
                                 ?.beginTransaction()
@@ -69,8 +84,15 @@ class PreviewBusFragment : Fragment() {
         )
     }
 
+    private fun PreviewBusAdapter.addBusData(location: Int, dataSet: ArrayList<RouteService>) {
+        this.items.add(SectionHeader(location, RouteService("", "", "")))
+        for (i in 0 until dataSet.size) {
+            this.items.add(SectionItem(location, dataSet[i]))
+        }
+    }
+
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun searchBusRouteId(busNumber: String) {
+    private fun searchSeoulBusRouteId(busNumber: String) {
         val url = URL("http://ws.bus.go.kr/api/rest/busRouteInfo/getBusRouteList?ServiceKey=$SERVICE_KEY&strSrch=$busNumber")
 
         val parser = createParser(url).parser
@@ -193,10 +215,18 @@ class PreviewBusFragment : Fragment() {
             parserEvent = parser.next()
         }
 
-//        previewBusAdapter.items.clear()
-        previewBusAdapter.items.addAll(seoulBusData)
-        previewBusAdapter.notifyDataSetChanged()
+        when (seoulBusData.size) {
+            0 -> previewBusAdapter.notifyDataSetChanged()
+            else -> previewBusAdapter.addBusData(0, seoulBusData)
+        }
 
+//        adapter.addBusData(0, seoulBusData)
+//        adapter.notifyDataSetChanged()
+
+//        previewBusAdapter.items.clear()
+//        previewBusAdapter.items.addAll(seoulBusData)
+//        previewBusAdapter.notifyDataSetChanged()
+//
         seoulBusData.forEach {
             Log.d(
                     "XXX",
@@ -295,10 +325,17 @@ class PreviewBusFragment : Fragment() {
             parserEvent = parser.next()
         }
 
-//        previewBusAdapter.items.clear()
-        previewBusAdapter.items.addAll(gyeonggiBusData)
-        previewBusAdapter.notifyDataSetChanged()
+        when (gyeonggiBusData.size) {
+            0 -> previewBusAdapter.notifyDataSetChanged()
+            else -> previewBusAdapter.addBusData(1, gyeonggiBusData)
+        }
+//        adapter.addBusData(1, gyeonggiBusData)
+//        adapter.notifyDataSetChanged()
 
+//        previewBusAdapter.items.clear()
+//        previewBusAdapter.items.addAll(gyeonggiBusData)
+//        previewBusAdapter.notifyDataSetChanged()
+//
         gyeonggiBusData.forEach {
             Log.d(
                     "XXX",
